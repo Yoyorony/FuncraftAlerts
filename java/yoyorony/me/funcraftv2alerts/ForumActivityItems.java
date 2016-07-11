@@ -30,7 +30,7 @@ public class ForumActivityItems extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(Styles.getTheme(R.style.AppTheme));
+        setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_apercuforum);
         super.onCreate(savedInstanceState);
 
