@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorbackground"
+    android:focusableInTouchMode="true"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="yoyorony.me.funcraftv2alerts.MainActivity">
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <TextView
+                android:id="@+id/header1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@string/headerids"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/nameinput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:ems="10"
+                android:hint="@string/edittextpseudo"
+                android:inputType="textPersonName"
+                android:textColor="@color/colortext"
+                android:textColorHint="@color/colorhint" />
+
+            <EditText
+                android:id="@+id/mdpinput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/edittextmdp"
+                android:inputType="textPassword"
+                android:textColor="@color/colortext"
+                android:textColorHint="@color/colorhint" />
+
+            <Button
+                android:id="@+id/connectbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/buttontestid"
+                android:textColor="@color/colortext" />
+
+            <ProgressBar
+                android:id="@+id/progressBarConnect"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1.57"
+                android:backgroundTint="@color/colorcheck"
+                android:indeterminate="false"
+                android:max="1"
+                android:progress="0" />
+
+            <Button
+                android:id="@+id/forgetbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/buttonforgetid"
+                android:textColor="@color/colortext" />
+
+            <TextView
+                android:id="@+id/header5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:singleLine="true"
+                android:text="@string/headerrss"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/forumbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:text="@string/buttonforum"
+                android:textColor="@color/colortext" />
+
+            <Button
+                android:id="@+id/alertbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:enabled="false"
+                android:text="@string/buttonalert"
+                android:textColor="@color/colortext" />
+
+            <Button
+                android:id="@+id/convobutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="@string/buttonconvo"
+                android:textColor="@color/colortext" />
+
+            <TextView
+                android:id="@+id/header2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:singleLine="true"
+                android:text="@string/headernotif"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textStyle="bold" />
+
+            <Switch
+                android:id="@+id/activnotifswitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:buttonTint="@color/colorcheck"
+                android:checked="true"
+                android:text="@string/switchnotif"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/colortext" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/alertscheckBoxtext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/checkboxnotif"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/colortext" />
+
+                <CheckBox
+                    android:id="@+id/alertscheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:buttonTint="@color/colorcheck"
+                    android:checked="true" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/convocheckBoxtext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/checkboxconvos"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/colortext" />
+
+                <CheckBox
+                    android:id="@+id/convocheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:buttonTint="@color/colorcheck"
+                    android:checked="true" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/freqtext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/textviewfreq"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/colortext" />
+
+            <SeekBar
+                android:id="@+id/freqSeek"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="false"
+                android:max="6"
+                android:progress="2" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/sonneriecheckBoxtext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/checkboxson"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/colortext" />
+
+                <CheckBox
+                    android:id="@+id/sonneriecheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:buttonTint="@color/colorcheck"
+                    android:checked="false" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/vibreurcheckBoxtext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/checkboxvibreur"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/colortext" />
+
+                <ImageButton
+                    android:id="@+id/vibreurcheckBoxparam"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="40dp"
+                    android:background="@color/colorbackground"
+                    android:src="@drawable/ic_action_name" />
+
+                <CheckBox
+                    android:id="@+id/vibreurcheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:buttonTint="@color/colorcheck"
+                    android:checked="true" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/ledcheckBoxtext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/checkboxled"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/colortext" />
+
+                <ImageButton
+                    android:id="@+id/ledcheckBoxparam"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="40dp"
+                    android:background="@color/colorbackground"
+                    android:src="@drawable/ic_action_name" />
+
+                <CheckBox
+                    android:id="@+id/ledcheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:buttonTint="@color/colorcheck"
+                    android:checked="false" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/connexiontext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/connexionoption"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/colortext" />
+
+                <ImageButton
+                    android:id="@+id/connexionparam"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@color/colorbackground"
+                    android:src="@drawable/ic_action_name" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/header4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:singleLine="true"
+                android:text="@string/headerinfos"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/aproposbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:text="@string/buttonapropos"
+                android:textColor="@color/colortext" />
+
+            <Button
+                android:id="@+id/helpbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="@string/buttonhelp"
+                android:textColor="@color/colortext" />
+
+            <Button
+                android:id="@+id/checkversionbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/buttoncheckversion"
+                android:textColor="@color/colortext" />
+
+            <ProgressBar
+                android:id="@+id/progressBarCheckVersion"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1.57"
+                android:backgroundTint="@color/colorcheck"
+                android:indeterminate="false"
+                android:max="1"
+                android:progress="0" />
+
+            <Button
+                android:id="@+id/changelogbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="@string/buttonchangelog"
+                android:textColor="@color/colortext" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="20dp" />
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

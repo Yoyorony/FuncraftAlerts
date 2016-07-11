@@ -1,0 +1,187 @@
+<resources>
+    <string name="app_name">Funcraft</string>
+
+    <string name="headerids">Identifiants</string>
+    <string name="headernotif">Notifications</string>
+    <string name="headerstyle">Style</string>
+    <string name="headerinfos">Informations</string>
+    <string name="headerrss">Navigation</string>
+    <string name="buttonforum">Aperçu des forums</string>
+    <string name="buttonalert">Consulter mes alertes (en dev)</string>
+    <string name="buttonconvo">Consulter mes conversations (en dev)</string>
+    <string name="edittextpseudo">Pseudonyme</string>
+    <string name="edittextmdp">Mot de passe</string>
+    <string name="switchnotif">Activer les notifications</string>
+    <string name="checkboxnotif">Notifier les alertes</string>
+    <string name="checkboxconvos">Notifier les conversations</string>
+    <string name="checkboxson">Sonnerie</string>
+    <string name="checkboxvibreur">Vibreur</string>
+    <string name="checkboxled">Led</string>
+    <string name="connexionoption">Options de connexion</string>
+    <string name="buttontestid">Tester les identifiants</string>
+    <string name="buttonforgetid">Oublier les identifiants</string>
+    <string name="buttonapropos">A propos</string>
+    <string name="buttonchangelog">Regarder les nouveautés</string>
+    <string name="buttoncheckversion">Rechercher des mises à jour</string>
+    <string name="textviewfreq">Fréquence de synchronisation : 5min</string>
+    <string name="buttoncustom">Customiser</string>
+    <string name="buttonhelp">Aide</string>
+
+
+    <string name="apropostitle">A propos</string>
+    <string name="aproposmessage">Cette application, une fois les identifiants rentrés, vous permet d\'être notifié de vos alertes et vos conversations du forum de FunCraft v2.\nApplication non-officielle créée par Yoyorony.\n\nSi vous rencontrez un bug ou des fautes d\'orthographe, signalez le moi sur le forum, merci =)</string>
+    <string name="wififailtitle">Pas de connexion Wifi</string>
+    <string name="wififailmessage">Vous avez choisit de n\'utiliser que le réseau Wifi pour vous connecter et aucune connexion Wifi n\'est disponible.\nConnectez votre appareil à un réseau Wifi ou désactivez l\'option en question.</string>
+    <string name="deuxgfailtitle">Pas de connexion mobile haut débit</string>
+    <string name="deuxgfailmessage">Vous avez choisit de ne pas utiliser les réseaux 2G pour vous connecter et aucune connexion mobile haut débit (3G ou plus) n\'est disponible.\nConnectez votre appareil à un réseau mobile haut débit ou désactivez l\'option en question.</string>
+    <string name="networkfailtitle">Non connecté à Internet</string>
+    <string name="networkfailmessage">Votre appareil n\'est pas connecté à Internet.\nConnectez le puis réessayez.</string>
+    <string name="connexionfailtitle">Erreur lors de la connexion</string>
+    <string name="connexionfailmessage">Un problème est survenus lors de la connexion.\nRéessayez plus tard.</string>
+    <string name="idsfailtitle">Identifiants non conformes</string>
+    <string name="idsfailmessage">Les identifiants rentrés contiennent des caractères illégaux.\nChangez les puis réessayez.</string>
+    <string name="connectsuccestitle">Connexion réussie</string>
+    <string name="connectsuccesmessage">Les identifiants sont corrects et ont été enregistrés.\nVous allez maintenant pouvoir recevoir les notifications en temps réel.</string>
+    <string name="unknownerrortitle">Erreur inconnue</string>
+    <string name="unknownerrormessage">Une erreur inconnue est survenue.\nRéessayez plus tard.</string>
+    <string name="timeouttitle">Temps d\'attente trop long</string>
+    <string name="timeoutmessage">Le serveur met trop de temps à répondre.\nCela peut venir de votre connexion.</string>
+    <string name="invalididstitle">Identifiants invalides</string>
+    <string name="invalididsmessage">Pseudonyme ou mot de passe invalide.\nCorrigez les puis réessayez.</string>
+    <string name="newversiontitle">Nouvelle version disponible</string>
+    <string name="newversionmessage">Une nouvelle version de l\'application est disponible.\nCliquez sur le bouton \"Télécharger\" pour mettre à jour l\'application.</string>
+    <string name="nonewversiontitle">Aucune nouvelle version</string>
+    <string name="nonewversionmessage">Votre application est à jour.</string>
+    <string name="helptitle">Aide</string>
+    <string name="helpmessage">
+        C\'est encore pleins de fautes, désolé...
+        \nIdentifiants :
+        \n - Entrez vos identifiants dans les champs \"pseudonyme\" et \"mot de passe\" pour remettre à l\'application de se connecter et de vous avertir de vos alertes et conversations forum.
+        \n - Voir \"politique de confidencialité\" plus bas pour savoir ce que l\'application fait de vos identifiants.
+        \n - Vous avez à tout moment la possibilité d\'éffacer toute trace de vos identifiants avec le bouton \"oublier les identifiants\".
+        \n
+        \nConnexion :
+        \n - Avertisement : la version actuelle est gourmande en connexion (200 Mo/mois). Si vous avez un forfait limité en donnée mobile, activez l\'option \"utiliser la wifi uniquement\" dans le menu \"options de connexion\".
+        \n - Vous pouvez choisir sur quels réseaux l\'application est autorisé à se connecter dans le menu \"options de connexion\" (Wifi, 2G, 3G ou plus, ect...).
+        \n - Si vous rencontrez un crash et que vous shouaitez m\'envoyer le rapport, sachez que l\'application se connectera au réseau mobile même si l\'option \"utiliser la wifi uniquement\" est cochée. Sachez cependant que la quantité d\'informations envoyées est très faible (quelques octets), il ne mettra pas en mal votre forfait.
+        \n
+        \nMises à jour :
+        \n - Des mises à jour sont suseptibles d\'être disponibles. Vous pouvez rechercher les mises à jour manuellement avec le bouton \"rechercher des mises à jour\", ou activer les mises à jour automatiques avec l\'option \"rechercher les mises à jour automatiquement\" dans le menu \"options de connexion\".
+        \n - Avec l\'option \"rechercher les mises à jour automatiquement\", l\'application rechechera les mises à jour quotidienement.
+        \n
+        \n________________________
+        \n
+        \nPolitique de confidencialité :
+        \n
+        \nA propos des indentifiants :
+        \n - Les identifiants, une fois rentrés, sont stockés sur l\'appareil par une méthode sécurisé. Aucune autre application ne pourra les utiliser ou les lire.
+        \n - L\'application échange des informations (identifiants et nombre d\'alertes) au forum de Funcraft par une méthode sécurisée (protocole https).
+        \n
+        \nA propos des rapports de crash :
+        \n - Voici la liste des informations envoyé dans un rapport de crash : (du téléphone) la marque, le nom, le modèle, le numéro de série, (de l\'application) le numéro de version, la version et le rapport complet du crash.
+        \n - Ces informations sont envoyés au serveur sur le domaine : serveur24sur24.free.fr/FuncraftAlerts/*.
+        \n
+        \nA propos des mise à jours :
+        \n - Pour rechercher les mises à jour, l\'application se connecte au serveur sur le domaine : serveur24sur24.free.fr/FuncraftAlerts/*.
+    </string>
+
+    <string name="changelogtitle">Nouveautés</string>
+    <string name="changelogmessage">
+        v1.0.0 :
+        \n - Première version publique
+        \n - Correction massive des bugs
+        \n - Ajout de la possibilité de customiser le vibreur et la led
+        \n - Possibilité d\'envoyer des rapports d\'erreurs en cas de crash
+        \n - Vérification automatique des mises à jour (optionnel)
+        \n - Aperçu rapide des forums (flux rss)
+        \n - Ajouts mineurs
+        \n
+        \nv0.9.0 :
+        \n - Première version, bêta privée.
+    </string>
+
+    <string name="vibreurparamtitle">Option du vibreur</string>
+    <string name="vibreurparamswitch">Customiser le paterne</string>
+    <string name="vibreurparam1">Entrez un paterne :</string>
+    <string name="vibreurparamtest">Tester le vibreur</string>
+
+    <string name="ledparamtitle">Couleur de la led</string>
+
+    <string name="connexionparamtitle">Options de connexion</string>
+    <string name="connexionparamcheck1">Utiliser la wifi uniquement</string>
+    <string name="connexionparamcheck2">Utiliser la 2G (déconseillé)</string>
+    <string name="connexionparamcheck3">Rechercher les mises à jour automatiquement</string>
+    <string name="connexionparamcheck4">Economiseur de données (en développement)</string>
+
+    <string name="forgottitle">Oublier les identifiants</string>
+    <string name="forgotmessage">Voulez-vous vraiment oublier les identifiants ?</string>
+
+    <string-array name="StylesList">
+        <item>Rouge</item>
+        <item>Bleu</item>
+        <item>Vert</item>
+    </string-array>
+
+    <string-array name="PaternsArray">
+        <item>Aucun</item>
+        <item>Long</item>
+        <item>Court</item>
+        <item>Bref</item>
+    </string-array>
+
+    <string-array name="LedColorArray">
+        <item>Rouge</item>
+        <item>Violette</item>
+        <item>Bleu</item>
+        <item>Jaune</item>
+        <item>Verte</item>
+        <item>Orange</item>
+        <item>Blanche</item>
+    </string-array>
+
+    <string-array name="ForumsPrincipauxSubtitle">
+        <item>Annonces &amp; Règles
+            \nRecrutement Staff</item>
+        <item>Discussions
+            \nTeams
+            \nSuggestions &amp; Idées
+            \nAstuces &amp; Entraide
+            \nSignaler un Bug</item>
+        <item>Hors sujet
+            \nPrésentez-vous
+            \nVos Talents &amp; Créations</item>
+        <item>Discussions Minecraft
+            \nResource Packs
+            \nMaps, Constructions &amp; Redstone
+            \nMods, Plugins &amp; Outils</item>
+    </string-array>
+    <string-array name="ForumsPrincipauxTitle">
+        <item>Funcraft</item>
+        <item>Serveur et mini-jeu</item>
+        <item>Hors Minecraft</item>
+        <item>Minecraft</item>
+    </string-array>
+
+    <string-array name="Forums0Title">
+        <item>Annonces &amp; Règles</item>
+        <item>Recrutement Staff</item>
+    </string-array>
+    <string-array name="Forums1Title">
+        <item>Discussions</item>
+        <item>Teams</item>
+        <item>Suggestions &amp; Idées</item>
+        <item>Astuces &amp; Entraide</item>
+        <item>Signaler un Bug</item>
+    </string-array>
+    <string-array name="Forums2Title">
+        <item>Hors sujet</item>
+        <item>Présentez-vous</item>
+        <item>Vos Talents &amp; Créations</item>
+    </string-array>
+    <string-array name="Forums3Title">
+        <item>Discussions Minecraft</item>
+        <item>Resource Packs</item>
+        <item>Maps, Constructions &amp; Redstone</item>
+        <item>Mods, Plugins &amp; Outils</item>
+    </string-array>
+</resources>

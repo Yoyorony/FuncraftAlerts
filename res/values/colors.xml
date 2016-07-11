@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#d83c00</color>
+    <color name="colorPrimaryDark">#812400</color>
+    <color name="colorAccent">#df3000</color>
+
+    <color name="colortext">#000000</color>
+    <color name="colorbackground">#FFFFFF</color>
+    <color name="colorhint">#303030</color>
+    <color name="colorbutton">#E0E0E0</color>
+    <color name="colorcheck">#df3000</color>
+
+    <string name="codecolorcheckred">#df3000</string>
+    <string name="codecolorcheckblue">#006fff</string>
+    <string name="codecolorcheckgreen">#28ba00</string>
+</resources>
