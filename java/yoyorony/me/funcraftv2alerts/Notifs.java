@@ -124,8 +124,6 @@ public class Notifs extends Service {
 
                             Intent notificationIntent = new Intent(getBaseContext(), NotifsIntentCall.class);
                             PendingIntent contentIntent = PendingIntent.getService(getBaseContext(), 0, notificationIntent, 0);
-                            Intent notificationKillIntent = new Intent(getBaseContext(), NotifsIntentKillCall.class);
-                            PendingIntent contentKillIntent = PendingIntent.getService(getBaseContext(), 0, notificationKillIntent, 0);
                             Notification.Builder notifbuilder = new Notification.Builder(getBaseContext())
                                     .setContentTitle(s)
                                     .setContentText("Notifications du forum Funcraft")
@@ -134,7 +132,6 @@ public class Notifs extends Service {
                                     .setLargeIcon(BitmapFactory.decodeResource(getBaseContext().getResources(), R.mipmap.ic_launcher))
                                     .setSmallIcon(R.drawable.ic_stat_name)
                                     .setTicker(s)
-                                    //TODO anticrampe .setDeleteIntent(contentKillIntent)
                                     .setContentIntent(contentIntent);
 
                             boolean b = FunApp.preferences.getBoolean("notified", false);
