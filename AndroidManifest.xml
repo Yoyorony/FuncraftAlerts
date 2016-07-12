@@ -31,6 +31,14 @@
             android:name=".ForumActivityItems"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ForumActivityItemsSecond"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ForumActivityItemsThird"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme" />
 
         <activity
             android:name=".ExceptionSend"
