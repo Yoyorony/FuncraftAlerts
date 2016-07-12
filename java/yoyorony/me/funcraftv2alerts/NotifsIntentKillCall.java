@@ -4,7 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 
-class NotifsIntentKillCall extends Service {
+public class NotifsIntentKillCall extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         //TODO anti crampe
