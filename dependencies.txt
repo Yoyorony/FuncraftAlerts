@@ -1,0 +1,2 @@
+Joda-time v2.9.3 under Apache License Version 2.0
+Jsoup v1.9.2 under MIT License
