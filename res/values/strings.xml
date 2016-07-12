@@ -184,4 +184,33 @@
         <item>Maps, Constructions &amp; Redstone</item>
         <item>Mods, Plugins &amp; Outils</item>
     </string-array>
+
+    <string-array name="Forums11Title">
+        <item>Présentation de Teams</item>
+        <item>Recrutement Teams</item>
+    </string-array>
+    <string-array name="Forums12Title">
+        <item>Améliorations</item>
+        <item>Propositions de Mini-Jeux</item>
+    </string-array>
+    <string-array name="Forums13Title">
+        <item>Demande d\'aide / Questions</item>
+    </string-array>
+    <string-array name="Forums14Title">
+        <item>Bugs traités</item>
+    </string-array>
+    <string-array name="Forums20Title">
+        <item>Les Jeux Forum</item>
+    </string-array>
+    <string-array name="Forums21Title">
+        <item>Présentation du Staff</item>
+    </string-array>
+    <string-array name="Forums22Title">
+        <item>Demandes de Créations</item>
+    </string-array>
+
+    <string-array name="Forums110Title">
+        <item>Améliorations Acceptées</item>
+        <item>Améliorations Refusées</item>
+    </string-array>
 </resources>
