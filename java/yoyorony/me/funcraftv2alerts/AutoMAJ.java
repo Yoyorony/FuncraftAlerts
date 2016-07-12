@@ -74,7 +74,7 @@ public class AutoMAJ extends Service {
                             }
 
                             if (FunApp.majdispo) {
-                                Intent notificationIntent = new Intent(getBaseContext(), MAJNotifsIntentCall.class);
+                                Intent notificationIntent = new Intent(getBaseContext(), AutoMAJNotifsIntentCall.class);
                                 PendingIntent contentIntent = PendingIntent.getService(getBaseContext(), 0, notificationIntent, 0);
                                 Notification.Builder notifbuilder = new Notification.Builder(getBaseContext())
                                         .setContentTitle("Mise à jour de Funcraft disponible")
