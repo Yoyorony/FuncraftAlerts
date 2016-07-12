@@ -46,7 +46,7 @@
 
         <service android:name=".Notifs" />
         <service android:name=".AutoMAJ" />
-        <service android:name=".NotifsMAJIntentCall" />
+        <service android:name=".AutoMAJNotifsIntentCall" />
         <service android:name=".NotifsIntentCall" />
         <service android:name=".NotifsIntentKillCall" />
 
