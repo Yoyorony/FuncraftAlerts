@@ -42,13 +42,12 @@
 
         <activity
             android:name=".ExceptionSend"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
 
         <service android:name=".Notifs" />
         <service android:name=".AutoMAJ" />
         <service android:name=".AutoMAJNotifsIntentCall" />
         <service android:name=".NotifsIntentCall" />
-        <service android:name=".NotifsIntentKillCall" />
 
         <receiver
             android:name=".BootReceiver"
