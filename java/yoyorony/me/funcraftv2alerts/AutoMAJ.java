@@ -7,7 +7,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Binder;
 
 import org.joda.time.DateTime;
@@ -75,7 +74,7 @@ public class AutoMAJ extends Service {
                             }
 
                             if (FunApp.majdispo) {
-                                Intent notificationIntent = new Intent(getBaseContext(), NotifsMAJIntentCall.class);
+                                Intent notificationIntent = new Intent(getBaseContext(), MAJNotifsIntentCall.class);
                                 PendingIntent contentIntent = PendingIntent.getService(getBaseContext(), 0, notificationIntent, 0);
                                 Notification.Builder notifbuilder = new Notification.Builder(getBaseContext())
                                         .setContentTitle("Mise à jour de Funcraft disponible")
@@ -114,23 +113,5 @@ public class AutoMAJ extends Service {
             t.interrupt();
         } catch (NullPointerException ignored) {
         }
-    }
-}
-
-
-class NotifsMAJIntentCall extends Service {
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Intent browserintent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://serveur24sur24.free.fr/FuncraftAlerts/FuncraftAlerts.apk"));
-        browserintent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(browserintent);
-
-        stopSelf();
-        return START_NOT_STICKY;
-    }
-
-    @Override
-    public Binder onBind(Intent intent) {
-        return null;
     }
 }
