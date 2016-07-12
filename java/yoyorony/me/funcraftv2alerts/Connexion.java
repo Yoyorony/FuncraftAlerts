@@ -147,8 +147,8 @@ public class Connexion {
     }
 
     public static void refreshAlerts() {
-        boolean opti = FunApp.preferences.getBoolean("opti", true);
-        if (!opti) {
+        //TODO boolean opti = FunApp.preferences.getBoolean("opti", true);
+        //if (!opti) {
             NetworkInfo networkInfo = FunApp.connectivityManager.getActiveNetworkInfo();
             if (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()) {
                 boolean wifi = networkInfo.getType() == ConnectivityManager.TYPE_WIFI;
@@ -235,9 +235,9 @@ public class Connexion {
                     }
                 }
             }
-        } else {
+        /**} else {
             //TODO this ?????
-        }
+        }*/
     }
 
     public static void checkVersion(final String[][] messages) {

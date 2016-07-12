@@ -14,14 +14,6 @@ import org.joda.time.Hours;
 
 public class AutoMAJ extends Service {
     public static boolean reponsed = false;
-    /**
-     * TODO test automaj :
-     * - si maj -> message a ouverture activity            A TEST -> OK
-     * - si maj -> notif                                   A TEST -> OK
-     * - notif non spam (snooze = forever)                 A TEST -> OK
-     * - 1 verif 1 jour                                    A TEST
-     * - stoper les verifs si maj                          A TEST -> OK
-     */
 
     private Thread t;
 

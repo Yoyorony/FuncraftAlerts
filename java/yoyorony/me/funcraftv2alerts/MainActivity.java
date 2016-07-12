@@ -38,8 +38,6 @@ public class MainActivity extends AppCompatActivity {
      * TODO todo :
      * - optimisation des performances connexion (a discuter avec admins)
      * - optimisation/simplification du code (surtout notifs)
-     * - anti crampe a la fermeture manuelle de la notif (ca le fait aussi a l'ouverture du navigateur -> WTF ?)
-     * - java.lang.OutOfMemoryError: Could not allocate JNI Env    at yoyorony.me.funcraftv2alerts.Connexion.refreshAlerts(Connexion.java:136)     (a la creation du thread)
      * - aide text (orthographe)
      * - optimisation + desactiver optimisation (pas le droit encore)
      * - consult alert + convo
@@ -47,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
      *
      * TODO totest :
      * - tester alert et convo et changer option avec notif d'afficher -> doit rafréchir sans avertir la notif
-     * - tester si "not public service class" dans le manifest pose probleme ou non
-     * - maj auto test
      */
 
     public static AlertDialog.Builder alertDialog;
