@@ -8,7 +8,7 @@ android {
         applicationId "yoyorony.me.funcraftv2alerts"
         minSdkVersion 16 //presque 15 -> activnotif style
         targetSdkVersion 23
-        versionCode 2
+        versionCode 3
         versionName "1.0.0"
     }
     buildTypes {
