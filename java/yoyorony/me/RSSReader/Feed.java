@@ -1,5 +1,7 @@
 package yoyorony.me.RSSReader;
 
+import org.jsoup.Jsoup;
+
 import java.util.ArrayList;
 
 public class Feed {
@@ -23,7 +25,7 @@ public class Feed {
     }
 
     public String getDescription() {
-        return description;
+        return Jsoup.parse(description).text().replaceAll("<.*?>", "");
     }
 
     public void setDescription(String description) {

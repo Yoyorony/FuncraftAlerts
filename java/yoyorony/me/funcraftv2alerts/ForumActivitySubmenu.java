@@ -68,7 +68,7 @@ public class ForumActivitySubmenu extends AppCompatActivity {
         switch (ForumActivity.selection) {
             case 0:
                 Connexion.getSubmenuSubtitles(new String[]{"https://community.funcraft.net/forums/annonces-regles.2/index.rss",
-                        "https://community.funcraft.net/forums/recrutement-staff.5/index.rss"});
+                        "https://community.funcraft.net/forums/recrutement-staff.5/index.rss"}, 0);
                 while (!loaded) {
                     try {
                         Thread.sleep(100);
@@ -84,7 +84,7 @@ public class ForumActivitySubmenu extends AppCompatActivity {
                         "https://community.funcraft.net/forums/teams.41/index.rss",
                         "https://community.funcraft.net/forums/suggestions-idees.13/index.rss",
                         "https://community.funcraft.net/forums/astuces-entraide.21/index.rss",
-                        "https://community.funcraft.net/forums/signaler-un-bug.20/index.rss"});
+                        "https://community.funcraft.net/forums/signaler-un-bug.20/index.rss"}, 0);
                 while (!loaded) {
                     try {
                         Thread.sleep(100);
@@ -98,7 +98,7 @@ public class ForumActivitySubmenu extends AppCompatActivity {
             case 2:
                 Connexion.getSubmenuSubtitles(new String[]{"https://community.funcraft.net/forums/hors-sujet.9/index.rss",
                         "https://community.funcraft.net/forums/presentez-vous.8/index.rss",
-                        "https://community.funcraft.net/forums/vos-talents-creations.29/index.rss"});
+                        "https://community.funcraft.net/forums/vos-talents-creations.29/index.rss"}, 0);
                 while (!loaded) {
                     try {
                         Thread.sleep(100);
@@ -113,7 +113,7 @@ public class ForumActivitySubmenu extends AppCompatActivity {
                 Connexion.getSubmenuSubtitles(new String[]{"https://community.funcraft.net/forums/discussions-minecraft.36/index.rss",
                         "https://community.funcraft.net/forums/resource-packs.33/index.rss",
                         "https://community.funcraft.net/forums/maps-constructions-redstone.34/index.rss",
-                        "https://community.funcraft.net/forums/mods-plugins-outils.35/index.rss"});
+                        "https://community.funcraft.net/forums/mods-plugins-outils.35/index.rss"}, 0);
                 while (!loaded) {
                     try {
                         Thread.sleep(100);

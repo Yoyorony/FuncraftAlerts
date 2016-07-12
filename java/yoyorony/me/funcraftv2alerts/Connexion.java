@@ -6,8 +6,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.telephony.TelephonyManager;
 
-import org.jsoup.Jsoup;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -25,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import yoyorony.me.RSSReader.Feed;
+import yoyorony.me.RSSReader.Item;
 import yoyorony.me.RSSReader.RSSReader;
 
 public class Connexion {
@@ -333,11 +332,7 @@ public class Connexion {
                                     }
                                 }
 
-                                if (versionapp < versionserv) {
-                                    FunApp.majdispo = true;
-                                } else {
-                                    FunApp.majdispo = false;
-                                }
+                                FunApp.majdispo = versionapp < versionserv;
 
                                 connection.disconnect();
                             } catch (IOException ignored) {
@@ -421,7 +416,7 @@ public class Connexion {
         }
     }
 
-    public static void getSubmenuSubtitles(final String[] urlstr) {
+    public static void getSubmenuSubtitles(final String[] urlstr, final int subint) {
         NetworkInfo networkInfo = FunApp.connectivityManager.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()) {
             boolean wifi = networkInfo.getType() == ConnectivityManager.TYPE_WIFI;
@@ -433,19 +428,36 @@ public class Connexion {
                         public void run() {
                             try {
                                 ArrayList<String> Strings = new ArrayList<>();
-                                for (int i = 0; i < urlstr.length; i++) {
-                                    Feed feed = RSSReader.ReadRSS(new URL(urlstr[i]));
-                                    Strings.add(Jsoup.parse(feed.getDescription()).text().replaceAll("\\<.*?>", ""));
+                                for (String anUrlstr : urlstr) {
+                                    Feed feed = RSSReader.ReadRSS(new URL(anUrlstr));
+                                    Strings.add(feed.getDescription());
                                 }
-                                ForumActivitySubmenu.Subtitle = Strings;
+                                if(subint == 0){
+                                    ForumActivitySubmenu.Subtitle = Strings;
+                                    ForumActivitySubmenu.loaded = true;
+                                }else if(subint == 1) {
+                                    ForumActivityItems.SubtitleOption = Strings;
+                                    ForumActivityItems.loadedOption = true;
+                                }else if(subint == 2) {
+                                    ForumActivityItemsSecond.SubtitleOption = Strings;
+                                    ForumActivityItemsSecond.loadedOption = true;
+                                }
                             } catch (IOException e) {
                                 ArrayList<String> error = new ArrayList<>();
-                                for (int i = 0; i < urlstr.length; i++) {
+                                for (String ignored : urlstr) {
                                     error.add("Erreur réseau !");
                                 }
-                                ForumActivitySubmenu.Subtitle = error;
+                                if (subint == 0) {
+                                    ForumActivitySubmenu.Subtitle = error;
+                                    ForumActivitySubmenu.loaded = true;
+                                }else if(subint == 1) {
+                                    ForumActivityItems.SubtitleOption = error;
+                                    ForumActivityItems.loadedOption = true;
+                                }else if(subint == 2) {
+                                    ForumActivityItemsSecond.SubtitleOption = error;
+                                    ForumActivityItemsSecond.loadedOption = true;
+                                }
                             }
-                            ForumActivitySubmenu.loaded = true;
                         }
                     });
                     try {
@@ -453,18 +465,26 @@ public class Connexion {
                     } catch (InterruptedException | TimeoutException | ExecutionException e) {
                         f.cancel(true);
                         ArrayList<String> error = new ArrayList<>();
-                        for (int i = 0; i < urlstr.length; i++) {
+                        for (String ignored : urlstr) {
                             error.add("Erreur réseau !");
                         }
-                        ForumActivitySubmenu.Subtitle = error;
-                        ForumActivitySubmenu.loaded = true;
+                        if (subint == 0) {
+                            ForumActivitySubmenu.Subtitle = error;
+                            ForumActivitySubmenu.loaded = true;
+                        }else if(subint == 1) {
+                            ForumActivityItems.SubtitleOption = error;
+                            ForumActivityItems.loadedOption = true;
+                        }else if(subint == 2) {
+                            ForumActivityItemsSecond.SubtitleOption = error;
+                            ForumActivityItemsSecond.loadedOption = true;
+                        }
                     }
                 }
             }
         }
     }
 
-    public static void getItemsFeed(final String urlstr) {
+    public static void getItemsFeed(final String urlstr, final int subint) {
         NetworkInfo networkInfo = FunApp.connectivityManager.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()) {
             boolean wifi = networkInfo.getType() == ConnectivityManager.TYPE_WIFI;
@@ -475,19 +495,93 @@ public class Connexion {
                     Future f = executor.submit(new Runnable() {
                         public void run() {
                             try {
-                                ForumActivityItems.feed = RSSReader.ReadRSS(new URL(urlstr));
+                                Feed feed = RSSReader.ReadRSS(new URL(urlstr));
+                                ArrayList<String> Strings1 = new ArrayList<>();
+                                ArrayList<String> Strings2 = new ArrayList<>();
+                                ArrayList<String> Strings3 = new ArrayList<>();
+                                ArrayList<String> Strings4 = new ArrayList<>();
+                                for (Item item : feed.getItems()) {
+                                    Strings1.add(item.getTitle());
+                                    Strings2.add(item.getContent());
+                                    Strings3.add(item.getFromPubDate());
+                                    Strings4.add(item.getLink());
+                                }
+
+                                if(subint == 0) {
+                                    ForumActivityItems.Title = Strings1;
+                                    ForumActivityItems.Subtitle = Strings2;
+                                    ForumActivityItems.Dates = Strings3;
+                                    ForumActivityItems.Links = Strings4;
+                                    ForumActivityItems.loaded = true;
+                                }else if(subint == 1){
+                                    ForumActivityItemsSecond.Title = Strings1;
+                                    ForumActivityItemsSecond.Subtitle = Strings2;
+                                    ForumActivityItemsSecond.Dates = Strings3;
+                                    ForumActivityItemsSecond.Links = Strings4;
+                                    ForumActivityItemsSecond.loaded = true;
+                                }else if(subint == 2){
+                                    ForumActivityItemsThird.Title = Strings1;
+                                    ForumActivityItemsThird.Subtitle = Strings2;
+                                    ForumActivityItemsThird.Dates = Strings3;
+                                    ForumActivityItemsThird.Links = Strings4;
+                                    ForumActivityItemsThird.loaded = true;
+                                }
                             } catch (IOException e) {
-                                ForumActivityItems.feed = null;
+                                ArrayList<String> error = new ArrayList<>();
+                                error.add("Erreur réseau !");
+                                ArrayList<String> errorlink = new ArrayList<>();
+                                errorlink.add("");
+
+                                if(subint == 0){
+                                    ForumActivityItems.Title = error;
+                                    ForumActivityItems.Subtitle = error;
+                                    ForumActivityItems.Dates = error;
+                                    ForumActivityItems.Links = errorlink;
+                                    ForumActivityItems.loaded = true;
+                                }else if(subint == 1){
+                                    ForumActivityItemsSecond.Title = error;
+                                    ForumActivityItemsSecond.Subtitle = error;
+                                    ForumActivityItemsSecond.Dates = error;
+                                    ForumActivityItemsSecond.Links = errorlink;
+                                    ForumActivityItemsSecond.loaded = true;
+                                }else if(subint == 2){
+                                    ForumActivityItemsThird.Title = error;
+                                    ForumActivityItemsThird.Subtitle = error;
+                                    ForumActivityItemsThird.Dates = error;
+                                    ForumActivityItemsThird.Links = errorlink;
+                                    ForumActivityItemsThird.loaded = true;
+                                }
                             }
-                            ForumActivityItems.loaded = true;
                         }
                     });
                     try {
                         f.get(6000, TimeUnit.MILLISECONDS);
                     } catch (InterruptedException | TimeoutException | ExecutionException e) {
                         f.cancel(true);
-                        ForumActivityItems.feed = null;
-                        ForumActivityItems.loaded = true;
+                        ArrayList<String> error = new ArrayList<>();
+                        error.add("Erreur réseau !");
+                        ArrayList<String> errorlink = new ArrayList<>();
+                        errorlink.add("");
+
+                        if(subint == 0){
+                            ForumActivityItems.Title = error;
+                            ForumActivityItems.Subtitle = error;
+                            ForumActivityItems.Dates = error;
+                            ForumActivityItems.Links = errorlink;
+                            ForumActivityItems.loaded = true;
+                        }else if(subint == 1){
+                            ForumActivityItemsSecond.Title = error;
+                            ForumActivityItemsSecond.Subtitle = error;
+                            ForumActivityItemsSecond.Dates = error;
+                            ForumActivityItemsSecond.Links = errorlink;
+                            ForumActivityItemsSecond.loaded = true;
+                        }else if(subint == 2){
+                            ForumActivityItemsThird.Title = error;
+                            ForumActivityItemsThird.Subtitle = error;
+                            ForumActivityItemsThird.Dates = error;
+                            ForumActivityItemsThird.Links = errorlink;
+                            ForumActivityItemsThird.loaded = true;
+                        }
                     }
                 }
             }

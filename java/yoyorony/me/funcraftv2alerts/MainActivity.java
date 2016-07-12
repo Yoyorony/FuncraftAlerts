@@ -1,5 +1,6 @@
 package yoyorony.me.funcraftv2alerts;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -16,8 +17,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -33,6 +32,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+@SuppressLint("InflateParams")
 public class MainActivity extends AppCompatActivity {
     /**
      * TODO todo :
@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
      * - java.lang.OutOfMemoryError: Could not allocate JNI Env    at yoyorony.me.funcraftv2alerts.Connexion.refreshAlerts(Connexion.java:136)     (a la creation du thread)
      * - aide text (orthographe)
      * - optimisation + desactiver optimisation (pas le droit encore)
-     * - apercu forum
      * - consult alert + convo
      * - stop restart apres un crash
      *
@@ -138,8 +137,7 @@ public class MainActivity extends AppCompatActivity {
                                     mdp.setText("");
                                     try {
                                         Notifs.notifmanager.cancel(2101);
-                                    } catch (NullPointerException e) {
-                                    }
+                                    } catch (NullPointerException ignored) {}
                                     FunApp.alerts[0] = 0;
                                     FunApp.alerts[1] = 0;
                                     currentnotifcontent[0] = 0;
@@ -459,12 +457,6 @@ public class MainActivity extends AppCompatActivity {
             FunApp.preferenceseditor.putInt("freq", progress);
             FunApp.preferenceseditor.commit();
             Styles.changeFreqText(progress);
-        }
-    };
-    private OnItemClickListener ListViewListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
         }
     };
 
