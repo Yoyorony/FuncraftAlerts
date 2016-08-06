@@ -57,17 +57,17 @@
         C\'est encore pleins de fautes, désolé...
         \nIdentifiants :
         \n - Entrez vos identifiants dans les champs \"pseudonyme\" et \"mot de passe\" pour remettre à l\'application de se connecter et de vous avertir de vos alertes et conversations forum.
-        \n - Voir \"politique de confidencialité\" plus bas pour savoir ce que l\'application fait de vos identifiants.
+        \n - Voir \"politique de confidentialité\" plus bas pour savoir ce que l\'application fait de vos identifiants.
         \n - Vous avez à tout moment la possibilité d\'éffacer toute trace de vos identifiants avec le bouton \"oublier les identifiants\".
         \n
         \nConnexion :
-        \n - Avertisement : la version actuelle est gourmande en connexion (200 Mo/mois). Si vous avez un forfait limité en donnée mobile, activez l\'option \"utiliser la wifi uniquement\" dans le menu \"options de connexion\".
+        \n - Avertissement : la version actuelle est gourmande en connexion (200 Mo/mois). Si vous avez un forfait limité en donnée mobile, activez l\'option \"utiliser la wifi uniquement\" dans le menu \"options de connexion\".
         \n - Vous pouvez choisir sur quels réseaux l\'application est autorisé à se connecter dans le menu \"options de connexion\" (Wifi, 2G, 3G ou plus, ect...).
-        \n - Si vous rencontrez un crash et que vous shouaitez m\'envoyer le rapport, sachez que l\'application se connectera au réseau mobile même si l\'option \"utiliser la wifi uniquement\" est cochée. Sachez cependant que la quantité d\'informations envoyées est très faible (quelques octets), il ne mettra pas en mal votre forfait.
+        \n - Si vous rencontrez un crash et que vous souhaitez m\'envoyer le rapport, sachez que l\'application se connectera au réseau mobile même si l\'option \"utiliser la wifi uniquement\" est cochée. Sachez cependant que la quantité d\'informations envoyées est très faible (quelques octets), il ne mettra pas en mal votre forfait.
         \n
         \nMises à jour :
-        \n - Des mises à jour sont suseptibles d\'être disponibles. Vous pouvez rechercher les mises à jour manuellement avec le bouton \"rechercher des mises à jour\", ou activer les mises à jour automatiques avec l\'option \"rechercher les mises à jour automatiquement\" dans le menu \"options de connexion\".
-        \n - Avec l\'option \"rechercher les mises à jour automatiquement\", l\'application rechechera les mises à jour quotidienement.
+        \n - Des mises à jour sont susceptibles d\'être disponibles. Vous pouvez rechercher les mises à jour manuellement avec le bouton \"rechercher des mises à jour\", ou activer les mises à jour automatiques avec l\'option \"rechercher les mises à jour automatiquement\" dans le menu \"options de connexion\".
+        \n - Avec l\'option \"rechercher les mises à jour automatiquement\", l\'application recherchera les mises à jour quotidiennement.
         \n
         \n________________________
         \n
@@ -101,7 +101,7 @@
     </string>
 
     <string name="vibreurparamtitle">Option du vibreur</string>
-    <string name="vibreurparamswitch">Customiser le paterne</string>
+    <string name="vibreurparamswitch">Customizer le paterne</string>
     <string name="vibreurparam1">Entrez un paterne :</string>
     <string name="vibreurparamtest">Tester le vibreur</string>
 

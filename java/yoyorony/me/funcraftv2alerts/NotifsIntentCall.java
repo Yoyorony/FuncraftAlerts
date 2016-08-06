@@ -16,14 +16,14 @@ public class NotifsIntentCall extends Service {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(30000);
+                    Thread.sleep(60000);
                 } catch (InterruptedException ignored) {
                 }
                 FunApp.timerStopRecherche = false;
             }
         }).start();
         FunApp.alerts[0] = 0;
-        FunApp.alerts[0] = 0;
+        FunApp.alerts[1] = 0;
         MainActivity.currentnotifcontent[0] = 0;
         MainActivity.currentnotifcontent[1] = 0;
         FunApp.preferenceseditor.putBoolean("notified", false);

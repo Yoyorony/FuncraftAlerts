@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
      * - optimisation + desactiver optimisation (pas le droit encore)
      * - consult alert + convo
      * - stop restart apres un crash
+     * - consult flux de nouvelle
      *
      * TODO totest :
      * - tester alert et convo et changer option avec notif d'afficher -> doit rafréchir sans avertir la notif
