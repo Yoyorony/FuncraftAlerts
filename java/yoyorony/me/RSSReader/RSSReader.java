@@ -3,19 +3,29 @@ package yoyorony.me.RSSReader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.Socket;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class RSSReader {
     public static Feed ReadRSS(URL url) throws IOException {
         Feed feed = new Feed();
-        BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+        URLConnection connection = url.openConnection();
+        connection.setConnectTimeout(6000);
+        connection.setReadTimeout(6000);
+        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         String sourceCode = "";
         String line;
         while ((line = in.readLine()) != null) {
             sourceCode += line;
         }
+        in.close();
 
         feed.setTitle(findTitle(sourceCode));
         feed.setDescription(findDescription(sourceCode));
@@ -25,7 +35,6 @@ public class RSSReader {
         feed.setLink(findLink(sourceCode));
         feed.setItems(findItems(sourceCode));
 
-        in.close();
         return feed;
     }
 

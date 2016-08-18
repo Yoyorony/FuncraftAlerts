@@ -1,22 +1,34 @@
 package yoyorony.me.funcraftv2alerts;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
 public class ForumActivityItemsThird extends AppCompatActivity {
     public static ListView listviexRSS = null;
-    public static ArrayList<String> Title;
-    public static ArrayList<String> Subtitle;
-    public static ArrayList<String> Dates;
-    public static ArrayList<String> Links;
-    public static boolean loaded = false;
+    public static ArrayList<String> Title = new ArrayList<>();
+    public static ArrayList<String> Subtitle = new ArrayList<>();
+    public static ArrayList<String> Dates = new ArrayList<>();
+    public static ArrayList<String> Links = new ArrayList<>();
+    public static CustomBaseAdapterItems adapter;
+    public static AlertDialog waitDialog;
+    public static AlertDialog timeoutDialog;
+    public static AlertDialog errorDialog;
+    public static AlertDialog connexionerrorDialog;
+    public static boolean timeout;
+    public static boolean error;
+    public static boolean connexionerror;
     private AdapterView.OnItemClickListener ListViewListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -32,61 +44,141 @@ public class ForumActivityItemsThird extends AppCompatActivity {
         setContentView(R.layout.activity_apercuforum);
         super.onCreate(savedInstanceState);
 
+        this.setTitle(getActTitle());
+
+        buildDialogs();
+        waitDialog.show();
+
         listviexRSS = (ListView) findViewById(R.id.listViewRSS);
 
-        ArrayList<StringsForAdapterItems> forumList = getStringsAdapter();
-
-        listviexRSS.setAdapter(new CustomBaseAdapterItems(this, forumList));
+        adapter = new CustomBaseAdapterItems(this, new ArrayList<StringsForAdapterItems>());
+        listviexRSS.setAdapter(adapter);
 
         listviexRSS.setOnItemClickListener(ListViewListener);
+
+        new DownloadItems().execute();
+    }
+
+    private class DownloadItems extends AsyncTask<Void, Void, ArrayList<StringsForAdapterItems>> {
+        @Override
+        protected ArrayList<StringsForAdapterItems> doInBackground(Void... v) {
+            return getStringsAdapter();
+        }
+
+        protected void onPreExecute(){timeout = false; error = false;}
+
+        protected void onPostExecute(ArrayList<StringsForAdapterItems> forumList){
+            if(timeout){
+                waitDialog.dismiss();
+                timeoutDialog.show();
+            }else if(error){
+                waitDialog.dismiss();
+                errorDialog.show();
+            }else if(connexionerror){
+                waitDialog.dismiss();
+                connexionerrorDialog.show();
+            }else{
+                adapter.getStringArray().clear();
+                adapter.getStringArray().addAll(forumList);
+                adapter.notifyDataSetChanged();
+                waitDialog.dismiss();
+            }
+        }
+    }
+
+    private void buildDialogs(){
+        final ProgressDialog.Builder waitDialogBuilder = new ProgressDialog.Builder(this);
+        View view = this.getLayoutInflater().inflate(R.layout.waitdialogue, null);
+        ((TextView) view.findViewById(R.id.waitDialogTitle)).setText(R.string.waitTitle);
+        ((TextView) view.findViewById(R.id.waitDialogMessage)).setText(R.string.waitMessage);
+        waitDialogBuilder.setCancelable(false);
+        waitDialogBuilder.setView(view);
+        waitDialog = waitDialogBuilder.create();
+
+        final ProgressDialog.Builder timeoutDialogBuilder = new ProgressDialog.Builder(this);
+        view = this.getLayoutInflater().inflate(R.layout.alertdialogue, null);
+        ((TextView) view.findViewById(R.id.alertDialogTitle)).setText(R.string.timeouttitle);
+        ((TextView) view.findViewById(R.id.alertDialogMessage)).setText(R.string.timeoutmessage);
+        timeoutDialogBuilder.setCancelable(true);
+        timeoutDialogBuilder.setView(view);
+        timeoutDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        timeoutDialog = timeoutDialogBuilder.create();
+
+        final ProgressDialog.Builder errorDialogBuilder = new ProgressDialog.Builder(this);
+        view = this.getLayoutInflater().inflate(R.layout.alertdialogue, null);
+        ((TextView) view.findViewById(R.id.alertDialogTitle)).setText(R.string.connexionfailtitle);
+        ((TextView) view.findViewById(R.id.alertDialogMessage)).setText(R.string.connexionfailmessage);
+        errorDialogBuilder.setCancelable(true);
+        errorDialogBuilder.setView(view);
+        errorDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        errorDialog = errorDialogBuilder.create();
+
+        final ProgressDialog.Builder connexionerrorDialogBuilder = new ProgressDialog.Builder(this);
+        view = this.getLayoutInflater().inflate(R.layout.alertdialogue, null);
+        ((TextView) view.findViewById(R.id.alertDialogTitle)).setText(R.string.noconnexiontitle);
+        ((TextView) view.findViewById(R.id.alertDialogMessage)).setText(R.string.nonewversionmessage);
+        connexionerrorDialogBuilder.setCancelable(true);
+        connexionerrorDialogBuilder.setView(view);
+        connexionerrorDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        connexionerrorDialog = connexionerrorDialogBuilder.create();
+    }
+
+    private String getActTitle(){
+        return "Forum - " + getResources().getStringArray(R.array.Forums110Title)[ForumActivityItemsSecond.selection];
     }
 
     private ArrayList<StringsForAdapterItems> getStringsAdapter() {
         ArrayList<StringsForAdapterItems> Strings = new ArrayList<>();
 
         StringsForAdapterItems s;
-        ArrayList<String> list1 = new ArrayList<>();
-        ArrayList<String> list2 = new ArrayList<>();
-        ArrayList<String> list3 = new ArrayList<>();
-        switch (ForumActivityItems.selection){
-            case 0:
-                switch (ForumActivityItemsSecond.selection){
-                    case 0:
-                        Connexion.getItemsFeed("https://community.funcraft.net/forums/ameliorations-acceptees.16/index.rss", 2);
-                        break;
-                    case 1:
-                        Connexion.getItemsFeed("https://community.funcraft.net/forums/ameliorations-refusees.17/index.rss", 2);
-                        break;
-                }
-                break;
-            case 1:
-                switch (ForumActivityItemsSecond.selection){
+        if(ForumActivity.selection == 1 && ForumActivitySubmenu.selection == 2){
+            switch (ForumActivityItems.selection){
                 case 0:
-                    Connexion.getItemsFeed("https://community.funcraft.net/forums/propositions-acceptees.18/index.rss", 2);
+                    switch (ForumActivityItemsSecond.selection){
+                        case 0:
+                            Connexion.getItemsFeed("https://community.funcraft.net/forums/ameliorations-acceptees.16/index.rss", 2);
+                            break;
+                        case 1:
+                            Connexion.getItemsFeed("https://community.funcraft.net/forums/ameliorations-refusees.17/index.rss", 2);
+                            break;
+                    }
                     break;
                 case 1:
-                    Connexion.getItemsFeed("https://community.funcraft.net/forums/propositions-refusees.19/index.rss", 2);
+                    switch (ForumActivityItemsSecond.selection){
+                        case 0:
+                            Connexion.getItemsFeed("https://community.funcraft.net/forums/propositions-acceptees.18/index.rss", 2);
+                            break;
+                        case 1:
+                            Connexion.getItemsFeed("https://community.funcraft.net/forums/propositions-refusees.19/index.rss", 2);
+                            break;
+                    }
                     break;
             }
-                break;
         }
 
-        while (!loaded) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ignored) {
-                break;
-            }
-        }
-        list1.addAll(Title);
-        list2.addAll(Subtitle);
-        list3.addAll(Dates);
-
-        for (int i = 0; i < list1.size(); i++) {
+        for (int i = 0; i < Title.size(); i++) {
             s = new StringsForAdapterItems();
-            s.setTitle(list1.get(i));
-            s.setSubtitle(list2.get(i));
-            s.setDates(list3.get(i));
+            s.setTitle(Title.get(i));
+            s.setSubtitle(Subtitle.get(i));
+            s.setDates(Dates.get(i));
             Strings.add(s);
         }
 
