@@ -39,15 +39,11 @@ public class MainActivity extends AppCompatActivity {
      * TODO todo :
      * - optimisation/simplification du code (surtout notifs)
      * - consult flux de nouvelle
-     * - connexion auto when consult
      * - dimunuer le cache de l'application -> restart service every refresh
      * - phrase entiere alerte
      *
      * TODO totest :
-     * - tester alert et convo et changer option avec notif d'afficher -> doit rafréchir sans avertir la notif
-     * - debug chargement anim
      * - debug consult alerts + convos
-     * - alert readed or unreaded ? (il me faut une alerte)
      */
 
     public static AlertDialog.Builder alertDialog;
