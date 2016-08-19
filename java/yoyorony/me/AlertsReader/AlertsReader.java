@@ -10,6 +10,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import yoyorony.me.funcraftv2alerts.R;
+
 public class AlertsReader {
     public static ArrayList<Alert> ReadAlerts(String donnees) throws IOException{
         //connexion
@@ -30,8 +32,11 @@ public class AlertsReader {
         BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         String ligne;
         String source = "";
+        boolean rec = false;
         while ((ligne = reader.readLine()) != null) {
-            source += ligne;
+            if(ligne.contains("<ol class=\"alerts alertsScroller\">")){rec = true;}
+            if(rec){source += ligne;}
+            if(rec && ligne.contains("<div class=\"breadBoxBottom\">")){rec = false;}
             if (ligne.contains("Pseudonyme ou mot de passe invalide !")) {
                 source = "";
                 break;
@@ -43,7 +48,12 @@ public class AlertsReader {
         //traitement
         ArrayList<Alert> alerts = new ArrayList<>();
 
+        String date = "";
         while(source.contains("<li id=\"alert")){
+            if(source.contains("<h2 class=\"textHeading\">") && source.indexOf("<h2 class=\"textHeading\">") < source.indexOf("<li id=\"alert")){
+                date = source.substring(source.indexOf("<h2 class=\"textHeading\">") + 24);
+                date = Jsoup.parse(date.substring(0, date.indexOf("<"))).text();
+            }
             source = source.substring(source.indexOf("<li id=\"alert") +13);
             String alertstring = source.substring(0, source.indexOf("</li>"));
             Alert alert = new Alert();
@@ -51,8 +61,9 @@ public class AlertsReader {
             alert.setType(findType(alertstring));
             alert.setLink(findLink(alertstring, alert.getType()));
             alert.setWho(findWho(alertstring, alert.getType()));
-            alert.setWhere(findWhere(alertstring, alert.getType()));
+            alert.setMessage(findMessage(alertstring, alert.getType()));
             alert.setNew(findNew(alertstring));
+            alert.setPubDate(findPubDateAlert(alertstring, date));
 
             alerts.add(alert);
         }
@@ -105,15 +116,26 @@ public class AlertsReader {
         return "";
     }
 
-    public static String findWhere(String str, int type){
+    public static String findMessage(String str, int type){
         switch (type){
             case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7: case 8: case 9: case 10: case 11: case 14:
-                str = str.substring(str.indexOf("class=\"PopupItemLink\">") + 22);
-                str = str.substring(0, str.indexOf("</a>"));
-                if(str.contains("<span")){
-                    str = str.substring(str.indexOf("</span>") + 8); //+1 espace
+                str = str.substring(str.indexOf("h3>") + 1);
+                str = str.substring(str.indexOf("</a>") + 5);
+                String mes = str.substring(0, str.indexOf("<"));
+                mes = mes.substring(0, 1).toUpperCase() + mes.substring(1);
+
+                if(str.contains("<span class=\"prefix")){
+                    str = str.substring(str.indexOf("</span>") + 7);
+                    mes += "<font color=#d83c00>" + str.substring(0, str.indexOf("<")) + "</font>";
+
+                    str = str.substring(str.indexOf(">") + 1);
+                    return mes + str.substring(0, str.indexOf("<"));
                 }
-                return Jsoup.parse(str).text();
+                str = str.substring(str.indexOf(">") + 1);
+                mes += "<font color=#d83c00>" + str.substring(0, str.indexOf("<")) + "</font>";
+
+                str = str.substring(str.indexOf(">") + 1);
+                return mes + str.substring(0, str.indexOf("<"));
             case 12:
                 return "Vous suit dorénavant";
             case 13:
@@ -125,6 +147,15 @@ public class AlertsReader {
                 return Jsoup.parse(str).text();
         }
         return "";
+    }
+
+    public static boolean findNew(String str){
+        return str.contains("<span class=\"newIcon\"></span>");
+    }
+
+    public static String findPubDateAlert(String str, String day){
+        str = str.substring(str.indexOf("<span class=\"time muted\">") + 25);
+        return day + " à " + str.substring(0, str.indexOf("</span>"));
     }
 
     public static ArrayList<Convo> ReadConvos(String donnees) throws IOException{
@@ -145,8 +176,11 @@ public class AlertsReader {
         BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         String ligne;
         String source = "";
+        boolean rec = false;
         while ((ligne = reader.readLine()) != null) {
-            source += ligne;
+            if(ligne.contains("<ol class=\"discussionListItems\">")){rec = true;}
+            if(rec){source += ligne;}
+            if(rec && ligne.contains("</ol>")){rec = false;}
             if (ligne.contains("Pseudonyme ou mot de passe invalide !")) {
                 source = "";
                 break;
@@ -208,9 +242,5 @@ public class AlertsReader {
         str = str.substring(str.indexOf("<dd class=\"muted\">"));
         str = str.substring(str.indexOf("<a href=\"")+9);
         return "https://community.funcraft.net/" + str.substring(0, str.indexOf("\""));
-    }
-
-    public static boolean findNew(String str){
-        return str.contains("<span class=\"newIcon\"></span>");
     }
 }

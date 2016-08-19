@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,11 +27,11 @@ public class AlertReaderActivity extends AppCompatActivity {
     public static ListView listviexRSS = null;
     public static SwipeRefreshLayout swiper = null;
     public static ArrayList<String> Who;
-    public static ArrayList<String> Where;
+    public static ArrayList<String> Message;
     public static ArrayList<Integer> Type;
     public static ArrayList<String> Link;
     public static ArrayList<Boolean> New;
-    public static ArrayList<String> Date; //TODO date
+    public static ArrayList<String> PubDate;
     public static CustomBaseAdapterAlerts adapter;
     public static AlertDialog waitDialog;
     public static AlertDialog timeoutDialog;
@@ -87,10 +88,11 @@ public class AlertReaderActivity extends AppCompatActivity {
         protected void onPreExecute(){
             timeout = false; error = false; connexionerror = false;
             Who = new ArrayList<>();
-            Where = new ArrayList<>();
+            Message = new ArrayList<>();
             Type = new ArrayList<>();
             Link = new ArrayList<>();
             New = new ArrayList<>();
+            PubDate = new ArrayList<>();
         }
 
         protected void onPostExecute(ArrayList<StringsForAdapterAlerts> forumList){
@@ -179,9 +181,10 @@ public class AlertReaderActivity extends AppCompatActivity {
             StringsForAdapterAlerts s = new StringsForAdapterAlerts();
 
             s.setWho(Who.get(i));
-            s.setWhere(Where.get(i));
+            s.setMessage(Message.get(i));
             s.setImageResID(Type.get(i));
             s.setNew(New.get(i));
+            s.setPubDate(PubDate.get(i));
             Strings.add(s);
         }
 
@@ -191,9 +194,10 @@ public class AlertReaderActivity extends AppCompatActivity {
 
 class StringsForAdapterAlerts {
     private String who = "";
-    private String where = "";
+    private String message = "";
     private boolean neww = false;
     private int imageResID;
+    private String PubDate = "";
 
     public String getWho() {
         return who;
@@ -203,12 +207,12 @@ class StringsForAdapterAlerts {
         this.who = s;
     }
 
-    public String getWhere() {
-        return where;
+    public String getMessage() {
+        return message;
     }
 
-    public void setWhere(String s) {
-        this.where = s;
+    public void setMessage(String s) {
+        this.message = s;
     }
 
     public int getImageResID(){
@@ -250,6 +254,14 @@ class StringsForAdapterAlerts {
     public void setNew(boolean b){
         neww = b;
     }
+
+    public String getPubDate(){
+        return PubDate;
+    }
+
+    public void setPubDate(String s) {
+        PubDate = s;
+    }
 }
 
 class CustomBaseAdapterAlerts extends BaseAdapter {
@@ -281,7 +293,8 @@ class CustomBaseAdapterAlerts extends BaseAdapter {
             convertView = Inflater.inflate(R.layout.listviewcustom_alerts, null);
             holder = new ViewHolder();
             holder.txtWho = (TextView) convertView.findViewById(R.id.who);
-            holder.txtWhere = (TextView) convertView.findViewById(R.id.where);
+            holder.txtMessage = (TextView) convertView.findViewById(R.id.message);
+            holder.txtPubDate = (TextView) convertView.findViewById(R.id.pubdate);
             holder.imgType = (ImageView) convertView.findViewById(R.id.type);
 
             convertView.setTag(holder);
@@ -289,23 +302,28 @@ class CustomBaseAdapterAlerts extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.txtWhere.setText(StringArray.get(position).getWhere());
         holder.imgType.setImageResource(StringArray.get(position).getImageResID());
+        holder.txtPubDate.setText(StringArray.get(position).getPubDate());
 
         if(StringArray.get(position).getNew()){
             holder.txtWho.setText(StringArray.get(position).getWho() + " " + '\u2731');
-            holder.txtWhere.setTypeface(null, Typeface.BOLD);
+            holder.txtMessage.setTypeface(null, Typeface.BOLD);
+            holder.txtPubDate.setTypeface(null, Typeface.BOLD_ITALIC);
         }else{
             holder.txtWho.setText(StringArray.get(position).getWho());
-            holder.txtWhere.setTypeface(null, Typeface.NORMAL);
+            holder.txtMessage.setTypeface(null, Typeface.NORMAL);
+            holder.txtPubDate.setTypeface(null, Typeface.ITALIC);
         }
+
+        holder.txtMessage.setText(Html.fromHtml(StringArray.get(position).getMessage()));
 
         return convertView;
     }
 
     static class ViewHolder {
         TextView txtWho;
-        TextView txtWhere;
+        TextView txtMessage;
+        TextView txtPubDate;
         ImageView imgType;
     }
 }

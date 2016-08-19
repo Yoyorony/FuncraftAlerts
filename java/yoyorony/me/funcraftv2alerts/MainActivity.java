@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
      * - optimisation/simplification du code (surtout notifs)
      * - consult flux de nouvelle
      * - dimunuer le cache de l'application -> restart service every refresh
-     * - phrase entiere alerte
      *
      * TODO totest :
      * - debug consult alerts + convos

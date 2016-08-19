@@ -521,9 +521,10 @@ public class Connexion {
                         for (Alert a : alerts) {
                             AlertReaderActivity.Type.add(a.getType());
                             AlertReaderActivity.Who.add(a.getWho());
-                            AlertReaderActivity.Where.add(a.getWhere());
+                            AlertReaderActivity.Message.add(a.getMessage());
                             AlertReaderActivity.Link.add(a.getLink());
                             AlertReaderActivity.New.add(a.getNew());
+                            AlertReaderActivity.PubDate.add(a.getPubDate());
                         }
                     } catch (InterruptedIOException e){
                         AlertReaderActivity.timeout = true;
