@@ -3,7 +3,6 @@ package yoyorony.me.funcraftv2alerts;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,19 +18,12 @@ import java.util.Arrays;
 
 public class ForumActivity extends AppCompatActivity {
     public static ListView listviexRSS = null;
-    public static SwipeRefreshLayout swiper = null;
     public static int selection = -1;
     private OnItemClickListener ListViewListener = new OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             selection = position;
             startActivity(new Intent(getBaseContext(), ForumActivitySubmenu.class));
-        }
-    };
-    private SwipeRefreshLayout.OnRefreshListener SwiperListener = new SwipeRefreshLayout.OnRefreshListener() {
-        @Override
-        public void onRefresh() {
-            swiper.setRefreshing(false);
         }
     };
 
@@ -44,9 +36,6 @@ public class ForumActivity extends AppCompatActivity {
         this.setTitle("Aperçu des forums");
 
         listviexRSS = (ListView) findViewById(R.id.listViewRSS);
-        swiper = (SwipeRefreshLayout) findViewById(R.id.swipeRSS);
-
-        swiper.setOnRefreshListener(SwiperListener);
 
         ArrayList<StringsForAdapter> forumList = getStringsAdapter();
 

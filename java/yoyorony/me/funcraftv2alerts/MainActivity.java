@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,17 +36,16 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
     /**
      * TODO todo :
+     * - optimisation des performances connexion (a discuter avec admins)
      * - optimisation/simplification du code (surtout notifs)
+     * - aide text (orthographe)
+     * - optimisation + desactiver optimisation (pas le droit encore)
+     * - consult alert + convo
+     * - stop restart apres un crash
      * - consult flux de nouvelle
-     * - connexion auto when consult
-     * - dimunuer le cache de l'application -> restart service every refresh
-     * - phrase entiere alerte
      *
      * TODO totest :
      * - tester alert et convo et changer option avec notif d'afficher -> doit rafréchir sans avertir la notif
-     * - debug chargement anim
-     * - debug consult alerts + convos
-     * - alert readed or unreaded ? (il me faut une alerte)
      */
 
     public static AlertDialog.Builder alertDialog;
@@ -289,6 +287,12 @@ public class MainActivity extends AppCompatActivity {
                     deuxG.setEnabled(!FunApp.preferences.getBoolean("wifionly", true));
                     final TextView deuxGtext = (TextView) view2.findViewById(R.id.deuxGtext);
                     deuxGtext.setTextColor(FunApp.preferences.getBoolean("wifionly", true) ? Color.GRAY : Color.BLACK);
+                    final CheckBox opti = (CheckBox) view2.findViewById(R.id.opti);
+                    opti.setChecked(FunApp.preferences.getBoolean("opti", true));
+                    opti.setEnabled(false);
+                    opti.setChecked(false);
+                    final TextView optitext = (TextView) view2.findViewById(R.id.optitext);
+                    optitext.setTextColor(Color.GRAY); //TODO remove si autorisé <<  ^^
                     final CheckBox wifionly = (CheckBox) view2.findViewById(R.id.wifionly);
                     wifionly.setChecked(FunApp.preferences.getBoolean("wifionly", true));
                     final CheckBox automaj = (CheckBox) view2.findViewById(R.id.automaj);
@@ -310,6 +314,7 @@ public class MainActivity extends AppCompatActivity {
                                     FunApp.preferenceseditor.putBoolean("automaj", automaj.isChecked());
                                     FunApp.preferenceseditor.putBoolean("wifionly", wifionly.isChecked());
                                     FunApp.preferenceseditor.putBoolean("deuxG", deuxG.isChecked());
+                                    FunApp.preferenceseditor.putBoolean("opti", opti.isChecked());
                                     FunApp.preferenceseditor.commit();
                                     if (!isMyServiceRunning(AutoMAJ.class) && FunApp.preferences.getBoolean("automaj", true)) {
                                         startService(new Intent(getBaseContext(), AutoMAJ.class));
@@ -329,10 +334,10 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(getBaseContext(), ForumActivity.class));
                     break;
                 case R.id.alertbutton:
-                    startActivity(new Intent(getBaseContext(), AlertReaderActivity.class));
+                    //TODO consult alert button action
                     break;
                 case R.id.convobutton:
-                    startActivity(new Intent(getBaseContext(), ConvoReaderActivity.class));
+                    //TODO consult convo button action
                     break;
             }
         }
@@ -350,14 +355,13 @@ public class MainActivity extends AppCompatActivity {
                 sonnerie.setEnabled(false);
                 vibreurtext.setTextColor(Color.GRAY);
                 vibreur.setEnabled(false);
-                vibreurparam.getDrawable().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+                vibreurparam.getDrawable().setColorFilter(Color.GRAY, android.graphics.PorterDuff.Mode.SRC_IN);
                 vibreurparam.setEnabled(false);
                 ledtext.setTextColor(Color.GRAY);
                 led.setEnabled(false);
-                ledparam.getDrawable().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+                ledparam.getDrawable().setColorFilter(Color.GRAY, android.graphics.PorterDuff.Mode.SRC_IN);
                 ledparam.setEnabled(false);
                 connexiontext.setTextColor(Color.GRAY);
-                connexion.getDrawable().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
                 connexion.setEnabled(false);
                 FunApp.preferenceseditor.putBoolean("activnotif", false);
                 FunApp.preferenceseditor.commit();
@@ -384,14 +388,13 @@ public class MainActivity extends AppCompatActivity {
                 sonnerie.setEnabled(true);
                 vibreurtext.setTextColor(Color.BLACK);
                 vibreur.setEnabled(true);
-                vibreurparam.getDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN);
+                vibreurparam.getDrawable().setColorFilter(Color.BLACK, android.graphics.PorterDuff.Mode.SRC_IN);
                 vibreurparam.setEnabled(true);
                 ledtext.setTextColor(Color.BLACK);
                 led.setEnabled(true);
-                ledparam.getDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN);
+                ledparam.getDrawable().setColorFilter(Color.BLACK, android.graphics.PorterDuff.Mode.SRC_IN);
                 ledparam.setEnabled(true);
                 connexiontext.setTextColor(Color.BLACK);
-                connexion.getDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN);
                 connexion.setEnabled(true);
                 FunApp.preferenceseditor.putBoolean("activnotif", true);
                 FunApp.preferenceseditor.commit();
@@ -615,15 +618,14 @@ public class MainActivity extends AppCompatActivity {
             sonnerie.setEnabled(false);
             vibreurtext.setTextColor(Color.GRAY);
             vibreur.setEnabled(false);
-            vibreurparam.getDrawable().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+            vibreurparam.getDrawable().setColorFilter(Color.GRAY, android.graphics.PorterDuff.Mode.SRC_IN);
             vibreurparam.setEnabled(false);
             ledtext.setTextColor(Color.GRAY);
             led.setEnabled(false);
-            ledparam.getDrawable().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+            ledparam.getDrawable().setColorFilter(Color.GRAY, android.graphics.PorterDuff.Mode.SRC_IN);
             ledparam.setEnabled(false);
             connexiontext.setTextColor(Color.GRAY);
             connexion.setEnabled(false);
-            connexion.getDrawable().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
         } else {
             alertstext.setTextColor(Color.BLACK);
             alerts.setEnabled(true);
@@ -635,15 +637,14 @@ public class MainActivity extends AppCompatActivity {
             sonnerie.setEnabled(true);
             vibreurtext.setTextColor(Color.BLACK);
             vibreur.setEnabled(true);
-            vibreurparam.getDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN);
+            vibreurparam.getDrawable().setColorFilter(Color.BLACK, android.graphics.PorterDuff.Mode.SRC_IN);
             vibreurparam.setEnabled(true);
             ledtext.setTextColor(Color.BLACK);
             led.setEnabled(true);
-            ledparam.getDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN);
+            ledparam.getDrawable().setColorFilter(Color.BLACK, android.graphics.PorterDuff.Mode.SRC_IN);
             ledparam.setEnabled(true);
             connexiontext.setTextColor(Color.BLACK);
             connexion.setEnabled(true);
-            connexion.getDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN);
         }
     }
 

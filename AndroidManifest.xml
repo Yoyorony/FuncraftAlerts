@@ -39,14 +39,7 @@
             android:name=".ForumActivityItemsThird"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".AlertReaderActivity"
-            android:launchMode="singleTop"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".ConvoReaderActivity"
-            android:launchMode="singleTop"
-            android:theme="@style/AppTheme" />
+
         <activity
             android:name=".ExceptionSend"
             android:theme="@style/AppTheme" />

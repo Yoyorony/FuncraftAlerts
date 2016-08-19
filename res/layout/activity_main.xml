@@ -103,6 +103,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
+                android:enabled="false"
                 android:text="@string/buttonalert"
                 android:textColor="@color/colortext" />
 
@@ -110,6 +111,7 @@
                 android:id="@+id/convobutton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:enabled="false"
                 android:text="@string/buttonconvo"
                 android:textColor="@color/colortext" />
 
@@ -245,7 +247,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="40dp"
                     android:background="@color/colorbackground"
-                    android:src="@drawable/ic_settings_black_24dp" />
+                    android:src="@drawable/ic_action_name" />
 
                 <CheckBox
                     android:id="@+id/vibreurcheckBox"
@@ -279,7 +281,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="40dp"
                     android:background="@color/colorbackground"
-                    android:src="@drawable/ic_settings_black_24dp" />
+                    android:src="@drawable/ic_action_name" />
 
                 <CheckBox
                     android:id="@+id/ledcheckBox"
@@ -312,7 +314,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:background="@color/colorbackground"
-                    android:src="@drawable/ic_settings_black_24dp" />
+                    android:src="@drawable/ic_action_name" />
             </RelativeLayout>
 
             <TextView
