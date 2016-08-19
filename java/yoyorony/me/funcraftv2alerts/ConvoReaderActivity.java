@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -15,18 +17,21 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class ForumActivitySubmenu extends AppCompatActivity {
-    public static ListView listviexRSS = null;
+public class ConvoReaderActivity extends AppCompatActivity {
+    public static ListView listviex = null;
     public static SwipeRefreshLayout swiper = null;
-    public static ArrayList<String> Subtitle = new ArrayList<>();
-    public static int selection = -1;
-    public static CustomBaseAdapterSubmenu adapter;
+    public static ArrayList<String> Title;
+    public static ArrayList<String> PubDateMessage;
+    public static ArrayList<String> LastGuy;
+    public static ArrayList<Boolean> Lue;
+    public static ArrayList<String> Link;
+    public static CustomBaseAdapterConvos adapter;
     public static AlertDialog waitDialog;
     public static AlertDialog timeoutDialog;
     public static AlertDialog errorDialog;
@@ -37,63 +42,58 @@ public class ForumActivitySubmenu extends AppCompatActivity {
     private OnItemClickListener ListViewListener = new OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            selection = position;
-            startActivity(new Intent(getBaseContext(), ForumActivityItems.class));
+            Intent browserintent = new Intent(Intent.ACTION_VIEW, Uri.parse(Link.get(position)));
+            browserintent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(browserintent);
         }
     };
     private SwipeRefreshLayout.OnRefreshListener SwiperListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
-            new DownloadSubmenu().execute();
+            new DownloadConvos().execute();
         }
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
-        setContentView(R.layout.activity_apercuforum);
+        setContentView(R.layout.activity_apercuconvos);
         super.onCreate(savedInstanceState);
+
+        this.setTitle("Aperçu des conversations");
 
         buildDialogs();
         waitDialog.show();
 
-        switch (ForumActivity.selection) {
-            case 0:
-                this.setTitle("Forum - Funcraft");
-                break;
-            case 1:
-                this.setTitle("Forum - Serveur et mini-jeu");
-                break;
-            case 2:
-                this.setTitle("Forum - Hors Mincraft");
-                break;
-            case 3:
-                this.setTitle("forum - Minecraft");
-                break;
-        }
-
-        listviexRSS = (ListView) findViewById(R.id.listViewRSS);
-        swiper = (SwipeRefreshLayout) findViewById(R.id.swipeRSS);
+        listviex = (ListView) findViewById(R.id.listViewConvos);
+        swiper = (SwipeRefreshLayout) findViewById(R.id.swipeConvos);
 
         swiper.setOnRefreshListener(SwiperListener);
 
-        adapter = new CustomBaseAdapterSubmenu(this, new ArrayList<StringsForAdapterSubmenu>());
-        listviexRSS.setAdapter(adapter);
+        adapter = new CustomBaseAdapterConvos(ConvoReaderActivity.this, new ArrayList<StringsForAdapterConvos>());
+        listviex.setAdapter(adapter);
 
-        listviexRSS.setOnItemClickListener(ListViewListener);
+        listviex.setOnItemClickListener(ListViewListener);
 
-        new DownloadSubmenu().execute();
+        new DownloadConvos().execute();
     }
 
-    private class DownloadSubmenu extends AsyncTask<Void, Void, ArrayList<StringsForAdapterSubmenu>> {
+    private class DownloadConvos extends AsyncTask<Void, Void, ArrayList<StringsForAdapterConvos>>{
         @Override
-        protected ArrayList<StringsForAdapterSubmenu> doInBackground(Void... v) {
+        protected ArrayList<StringsForAdapterConvos> doInBackground(Void... v) {
             return getStringsAdapter();
         }
 
-        protected void onPreExecute(){timeout = false; error = false; connexionerror = false;}
+        protected void onPreExecute(){
+            timeout = false; error = false; connexionerror = false;
+            Link = new ArrayList<>();
+            Lue = new ArrayList<>();
+            LastGuy = new ArrayList<>();
+            PubDateMessage = new ArrayList<>();
+            Title = new ArrayList<>();
+        }
 
-        protected void onPostExecute(ArrayList<StringsForAdapterSubmenu> forumList){
+        protected void onPostExecute(ArrayList<StringsForAdapterConvos> forumList){
             if(timeout){
                 waitDialog.dismiss();
                 timeoutDialog.show();
@@ -168,47 +168,18 @@ public class ForumActivitySubmenu extends AppCompatActivity {
         connexionerrorDialog = connexionerrorDialogBuilder.create();
     }
 
-    private ArrayList<StringsForAdapterSubmenu> getStringsAdapter() {
-        ArrayList<StringsForAdapterSubmenu> Strings = new ArrayList<>();
+    private ArrayList<StringsForAdapterConvos> getStringsAdapter() {
+        ArrayList<StringsForAdapterConvos> Strings = new ArrayList<>();
 
-        StringsForAdapterSubmenu s;
-        ArrayList<String> list1 = new ArrayList<>();
-        switch (ForumActivity.selection) {
-            case 0:
-                Connexion.getSubmenuSubtitles(new String[]{"https://community.funcraft.net/forums/annonces-regles.2/index.rss",
-                        "https://community.funcraft.net/forums/recrutement-staff.5/index.rss"}, 0);
-                list1.addAll(Arrays.asList(getResources().getStringArray(R.array.Forums0Title)));
-                break;
-            case 1:
-                Connexion.getSubmenuSubtitles(new String[]{"https://community.funcraft.net/forums/discussions.7/index.rss",
-                        "https://community.funcraft.net/forums/teams.41/index.rss",
-                        "https://community.funcraft.net/forums/suggestions-idees.13/index.rss",
-                        "https://community.funcraft.net/forums/astuces-entraide.21/index.rss",
-                        "https://community.funcraft.net/forums/signaler-un-bug.20/index.rss"}, 0);
+        Connexion.getConvos();
 
-                list1.addAll(Arrays.asList(getResources().getStringArray(R.array.Forums1Title)));
-                break;
-            case 2:
-                Connexion.getSubmenuSubtitles(new String[]{"https://community.funcraft.net/forums/hors-sujet.9/index.rss",
-                        "https://community.funcraft.net/forums/presentez-vous.8/index.rss",
-                        "https://community.funcraft.net/forums/vos-talents-creations.29/index.rss"}, 0);
+        for (int i = 0; i < Title.size(); i++) {
+            StringsForAdapterConvos s = new StringsForAdapterConvos();
 
-                list1.addAll(Arrays.asList(getResources().getStringArray(R.array.Forums2Title)));
-                break;
-            case 3:
-                Connexion.getSubmenuSubtitles(new String[]{"https://community.funcraft.net/forums/discussions-minecraft.36/index.rss",
-                        "https://community.funcraft.net/forums/resource-packs.33/index.rss",
-                        "https://community.funcraft.net/forums/maps-constructions-redstone.34/index.rss",
-                        "https://community.funcraft.net/forums/mods-plugins-outils.35/index.rss"}, 0);
-
-                list1.addAll(Arrays.asList(getResources().getStringArray(R.array.Forums3Title)));
-                break;
-        }
-
-        for (int i = 0; i < Subtitle.size(); i++) {
-            s = new StringsForAdapterSubmenu();
-            s.setTitle(list1.get(i));
-            s.setSubtitle(Subtitle.get(i));
+            s.setTitle(Title.get(i));
+            s.setLastGuy(LastGuy.get(i));
+            s.setPubDateMessage(PubDateMessage.get(i));
+            s.setLue(Lue.get(i));
             Strings.add(s);
         }
 
@@ -216,37 +187,62 @@ public class ForumActivitySubmenu extends AppCompatActivity {
     }
 }
 
-class StringsForAdapterSubmenu {
-    private String title = "";
-    private String subtitle = "";
+class StringsForAdapterConvos {
+    private String Title = "";
+    private String PubDateMessage = "";
+    private String LastGuy;
+    private int Lue;
+    private boolean LueBool;
+
+    public void setTitle(String title) {
+        Title = title;
+    }
 
     public String getTitle() {
-        return title;
+        return Title;
     }
 
-    public void setTitle(String s) {
-        this.title = s;
+    public void setPubDateMessage(String pubDateMessage) {
+        PubDateMessage = pubDateMessage;
     }
 
-    public String getSubtitle() {
-        return subtitle;
+    public String getPubDateMessage() {
+        return PubDateMessage;
     }
 
-    public void setSubtitle(String s) {
-        this.subtitle = s;
+    public void setLastGuy(String lastGuy) {
+        LastGuy = lastGuy;
+    }
+
+    public String getLastGuy() {
+        return LastGuy;
+    }
+
+    public void setLue(boolean lue) {
+        if(lue){Lue = R.drawable.ic_drafts_black_24dp;}
+        else{Lue = R.drawable.ic_mail_black_24dp;}
+        LueBool = lue;
+    }
+
+    public int getLue() {
+        return Lue;
+    }
+
+    public boolean getLueBool() {
+        return LueBool;
     }
 }
 
-class CustomBaseAdapterSubmenu extends BaseAdapter {
-    private static ArrayList<StringsForAdapterSubmenu> StringArray;
+class CustomBaseAdapterConvos extends BaseAdapter {
+    private static ArrayList<StringsForAdapterConvos> StringArray;
     private LayoutInflater Inflater;
 
-    public CustomBaseAdapterSubmenu(Context context, ArrayList<StringsForAdapterSubmenu> Strings) {
+    public CustomBaseAdapterConvos(Context context, ArrayList<StringsForAdapterConvos> Strings) {
         StringArray = Strings;
         Inflater = LayoutInflater.from(context);
     }
 
-    public ArrayList<StringsForAdapterSubmenu> getStringArray(){return StringArray;}
+    public ArrayList<StringsForAdapterConvos> getStringArray(){return StringArray;}
 
     public int getCount() {
         return StringArray.size();
@@ -263,10 +259,12 @@ class CustomBaseAdapterSubmenu extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = Inflater.inflate(R.layout.listviewcustom_submenu, null);
+            convertView = Inflater.inflate(R.layout.listviewcustom_convos, null);
             holder = new ViewHolder();
             holder.txtTitle = (TextView) convertView.findViewById(R.id.title);
-            holder.txtSubtitle = (TextView) convertView.findViewById(R.id.subtitle);
+            holder.txtLastGuy = (TextView) convertView.findViewById(R.id.lastguy);
+            holder.txtPubDate = (TextView) convertView.findViewById(R.id.pubdate);
+            holder.imgLue = (ImageView) convertView.findViewById(R.id.lue);
 
             convertView.setTag(holder);
         } else {
@@ -274,13 +272,25 @@ class CustomBaseAdapterSubmenu extends BaseAdapter {
         }
 
         holder.txtTitle.setText(StringArray.get(position).getTitle());
-        holder.txtSubtitle.setText(StringArray.get(position).getSubtitle());
+        holder.txtLastGuy.setText(StringArray.get(position).getLastGuy());
+        holder.txtPubDate.setText(StringArray.get(position).getPubDateMessage());
+        holder.imgLue.setImageResource(StringArray.get(position).getLue());
+
+        if(!StringArray.get(position).getLueBool()){
+            holder.txtLastGuy.setTypeface(null, Typeface.BOLD);
+            holder.txtPubDate.setTypeface(null, Typeface.BOLD_ITALIC);
+        }else{
+            holder.txtLastGuy.setTypeface(null, Typeface.NORMAL);
+            holder.txtPubDate.setTypeface(null, Typeface.ITALIC);
+        }
 
         return convertView;
     }
 
     static class ViewHolder {
         TextView txtTitle;
-        TextView txtSubtitle;
+        TextView txtLastGuy;
+        TextView txtPubDate;
+        ImageView imgLue;
     }
 }

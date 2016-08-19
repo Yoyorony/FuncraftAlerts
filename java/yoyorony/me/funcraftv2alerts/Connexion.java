@@ -9,19 +9,22 @@ import android.telephony.TelephonyManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
 import java.io.OutputStreamWriter;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
+import javax.net.ssl.HttpsURLConnection;
+
+import yoyorony.me.AlertsReader.Alert;
+import yoyorony.me.AlertsReader.AlertsReader;
+import yoyorony.me.AlertsReader.Convo;
 import yoyorony.me.RSSReader.Feed;
 import yoyorony.me.RSSReader.Item;
 import yoyorony.me.RSSReader.RSSReader;
@@ -46,31 +49,22 @@ public class Connexion {
                                 Looper.prepare();
                                 try {
                                     //connexion
+                                    CookieManager cookieManager = new CookieManager();
+                                    cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+                                    CookieHandler.setDefault(cookieManager);
+
                                     URL url = new URL("https://community.funcraft.net/login/login");
-                                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                                    HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+                                    connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:39.0) Gecko/20100101 Firefox/39.0");
                                     connection.setDoOutput(true);
                                     connection.setChunkedStreamingMode(0);
                                     connection.setRequestMethod("POST");
                                     connection.setConnectTimeout(10000);
-                                    connection.setInstanceFollowRedirects(false);
+                                    connection.setInstanceFollowRedirects(true);
 
                                     OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
                                     writer.write(donnees);
                                     writer.flush();
-
-                                    String sessionid = null;
-                                    String headerName;
-                                    for (int i = 1; (headerName = connection.getHeaderFieldKey(i)) != null; i++) {
-                                        if (headerName.equals("Set-Cookie")) {
-                                            String cookie = connection.getHeaderField(i);
-                                            cookie = cookie.substring(0, cookie.indexOf(";"));
-                                            String cookieName = cookie.substring(0, cookie.indexOf("="));
-                                            String cookieValue = cookie.substring(cookie.indexOf("=") + 1, cookie.length());
-                                            if (cookieName.equals("xf_session")) {
-                                                sessionid = cookieValue;
-                                            }
-                                        }
-                                    }
 
                                     BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                                     String ligne;
@@ -80,20 +74,6 @@ public class Connexion {
                                             result = 0;
                                             break;
                                         }
-                                    }
-
-                                    connection.disconnect();
-
-
-                                    //verification
-                                    url = new URL("https://community.funcraft.net/");
-                                    connection = (HttpURLConnection) url.openConnection();
-                                    connection.setDoOutput(true);
-                                    connection.setConnectTimeout(10000);
-                                    connection.setRequestProperty("Cookie", "xf_session=" + sessionid);
-
-                                    reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                                    while ((ligne = reader.readLine()) != null) {
                                         if (ligne.contains("<strong class=\"accountUsername\">" + MainActivity.name.getText().toString() + "</strong>")) {
                                             result = 1;
                                             break;
@@ -147,97 +127,56 @@ public class Connexion {
     }
 
     public static void refreshAlerts() {
-        //TODO boolean opti = FunApp.preferences.getBoolean("opti", true);
-        //if (!opti) {
-            NetworkInfo networkInfo = FunApp.connectivityManager.getActiveNetworkInfo();
-            if (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()) {
-                boolean wifi = networkInfo.getType() == ConnectivityManager.TYPE_WIFI;
-                if (wifi || !FunApp.preferences.getBoolean("wifionly", true)) {
-                    boolean supDeuxG = isSupDeuxG(networkInfo.getSubtype());
-                    if (supDeuxG || FunApp.preferences.getBoolean("deuxG", false) || wifi) {
-                        try {
-                            final String donnees = URLEncoder.encode("login", "UTF-8") + "=" + URLEncoder.encode(FunApp.preferences.getString("name", ""), "UTF-8")
-                                    + "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(FunApp.preferences.getString("mdp", ""), "UTF-8")
-                                    + "&" + URLEncoder.encode("cookie_check", "UTF-8") + "=" + URLEncoder.encode("0", "UTF-8")
-                                    + "&" + URLEncoder.encode("_xfToken", "UTF-8") + "=" + URLEncoder.encode("", "UTF-8")
-                                    + "&" + URLEncoder.encode("redirect", "UTF-8") + "=" + URLEncoder.encode("https://community.funcraft.net/", "UTF-8");
+        NetworkInfo networkInfo = FunApp.connectivityManager.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()) {
+            boolean wifi = networkInfo.getType() == ConnectivityManager.TYPE_WIFI;
+            if (wifi || !FunApp.preferences.getBoolean("wifionly", true)) {
+                boolean supDeuxG = isSupDeuxG(networkInfo.getSubtype());
+                if (supDeuxG || FunApp.preferences.getBoolean("deuxG", false) || wifi) {
+                    try {
+                        final String donnees = URLEncoder.encode("login", "UTF-8") + "=" + URLEncoder.encode(FunApp.preferences.getString("name", ""), "UTF-8")
+                                + "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(FunApp.preferences.getString("mdp", ""), "UTF-8")
+                                + "&" + URLEncoder.encode("cookie_check", "UTF-8") + "=" + URLEncoder.encode("0", "UTF-8")
+                                + "&" + URLEncoder.encode("_xfToken", "UTF-8") + "=" + URLEncoder.encode("", "UTF-8")
+                                + "&" + URLEncoder.encode("redirect", "UTF-8") + "=" + URLEncoder.encode("https://community.funcraft.net/?_xfResponseType=json", "UTF-8");
+                        //connexion
+                        CookieManager cookieManager = new CookieManager();
+                        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+                        CookieHandler.setDefault(cookieManager);
 
-                            new Thread(new Runnable() {
-                                public void run() {
-                                    Looper.prepare();
-                                    try {
-                                        //connexion
-                                        URL url = new URL("https://community.funcraft.net/login/login");
-                                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                                        connection.setDoOutput(true);
-                                        connection.setChunkedStreamingMode(0);
-                                        connection.setRequestMethod("POST");
-                                        connection.setConnectTimeout(10000);
-                                        connection.setInstanceFollowRedirects(false);
+                        URL url = new URL("https://community.funcraft.net/login/login");
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:39.0) Gecko/20100101 Firefox/39.0");
+                        connection.setDoOutput(true);
+                        connection.setChunkedStreamingMode(0);
+                        connection.setRequestMethod("POST");
+                        connection.setConnectTimeout(10000);
+                        connection.setInstanceFollowRedirects(true);
 
-                                        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-                                        writer.write(donnees);
-                                        writer.flush();
+                        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+                        writer.write(donnees);
+                        writer.flush();
 
-                                        String sessionid = null;
-                                        String headerName;
-                                        for (int i = 1; (headerName = connection.getHeaderFieldKey(i)) != null; i++) {
-                                            if (headerName.equals("Set-Cookie")) {
-                                                String cookie = connection.getHeaderField(i);
-                                                cookie = cookie.substring(0, cookie.indexOf(";"));
-                                                String cookieName = cookie.substring(0, cookie.indexOf("="));
-                                                String cookieValue = cookie.substring(cookie.indexOf("=") + 1, cookie.length());
-                                                if (cookieName.equals("xf_session")) {
-                                                    sessionid = cookieValue;
-                                                }
-                                            }
-                                        }
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        String ligne;
+                        while ((ligne = reader.readLine()) != null) {
+                            if (ligne.contains("Pseudonyme ou mot de passe invalide !")) {
+                                break;
+                            }
+                            if (ligne.contains("_visitor_conversationsUnread") && ligne.contains("_visitor_alertsUnread")) {
+                                ligne = ligne.substring(ligne.indexOf("_visitor_conversationsUnread\":\"") + 31);
+                                FunApp.alerts[0] = Integer.parseInt(ligne.substring(0, ligne.indexOf("\"")));
 
-                                        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                                        String ligne;
-                                        while ((ligne = reader.readLine()) != null) {
-                                            if (ligne.contains("Pseudonyme ou mot de passe invalide !")) {
-                                                break;
-                                            }
-                                        }
-
-                                        connection.disconnect();
-
-
-                                        //verification
-                                        url = new URL("https://community.funcraft.net/");
-                                        connection = (HttpURLConnection) url.openConnection();
-                                        connection.setDoOutput(true);
-                                        connection.setConnectTimeout(10000);
-                                        connection.setRequestProperty("Cookie", "xf_session=" + sessionid);
-
-                                        reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                                        int turn = 0;
-                                        while ((ligne = reader.readLine()) != null) {
-                                            if (ligne.contains("<span class=\"Total\">")) {
-                                                turn++;
-                                                if (turn == 1) {
-                                                    FunApp.alerts[0] = Integer.parseInt(ligne.replaceAll("[\\D]", ""));
-                                                } else if (turn == 2) {
-                                                    FunApp.alerts[1] = Integer.parseInt(ligne.replaceAll("[\\D]", ""));
-                                                }
-                                            }
-                                        }
-
-                                        connection.disconnect();
-                                    } catch (IOException | NullPointerException ignored) {
-                                    }
-                                    Looper.loop();
-                                }
-                            }).start();
-                        } catch (IOException ignored) {
+                                ligne = ligne.substring(ligne.indexOf("_visitor_alertsUnread\":\"") + 24);
+                                FunApp.alerts[1] = Integer.parseInt(ligne.substring(0, ligne.indexOf("\"")));
+                            }
                         }
+                        connection.disconnect();
+                    } catch (IOException | NullPointerException ignored) {
                     }
                 }
             }
-        /**} else {
-            //TODO this ?????
-        }*/
+        }
     }
 
     public static void checkVersion(final String[][] messages) {
@@ -423,63 +362,61 @@ public class Connexion {
             if (wifi || !FunApp.preferences.getBoolean("wifionly", true)) {
                 boolean supDeuxG = isSupDeuxG(networkInfo.getSubtype());
                 if (supDeuxG || FunApp.preferences.getBoolean("deuxG", false) || wifi) {
-                    ExecutorService executor = Executors.newSingleThreadExecutor();
-                    Future f = executor.submit(new Runnable() {
-                        public void run() {
-                            try {
-                                ArrayList<String> Strings = new ArrayList<>();
-                                for (String anUrlstr : urlstr) {
-                                    Feed feed = RSSReader.ReadRSS(new URL(anUrlstr));
-                                    Strings.add(feed.getDescription());
-                                }
-                                if(subint == 0){
-                                    ForumActivitySubmenu.Subtitle = Strings;
-                                    ForumActivitySubmenu.loaded = true;
-                                }else if(subint == 1) {
-                                    ForumActivityItems.SubtitleOption = Strings;
-                                    ForumActivityItems.loadedOption = true;
-                                }else if(subint == 2) {
-                                    ForumActivityItemsSecond.SubtitleOption = Strings;
-                                    ForumActivityItemsSecond.loadedOption = true;
-                                }
-                            } catch (IOException e) {
-                                ArrayList<String> error = new ArrayList<>();
-                                for (String ignored : urlstr) {
-                                    error.add("Erreur réseau !");
-                                }
-                                if (subint == 0) {
-                                    ForumActivitySubmenu.Subtitle = error;
-                                    ForumActivitySubmenu.loaded = true;
-                                }else if(subint == 1) {
-                                    ForumActivityItems.SubtitleOption = error;
-                                    ForumActivityItems.loadedOption = true;
-                                }else if(subint == 2) {
-                                    ForumActivityItemsSecond.SubtitleOption = error;
-                                    ForumActivityItemsSecond.loadedOption = true;
-                                }
-                            }
-                        }
-                    });
                     try {
-                        f.get(6000, TimeUnit.MILLISECONDS);
-                    } catch (InterruptedException | TimeoutException | ExecutionException e) {
-                        f.cancel(true);
-                        ArrayList<String> error = new ArrayList<>();
-                        for (String ignored : urlstr) {
-                            error.add("Erreur réseau !");
+                        ArrayList<String> Strings = new ArrayList<>();
+                        for (String anUrlstr : urlstr) {
+                            Feed feed = RSSReader.ReadRSS(new URL(anUrlstr));
+                            Strings.add(feed.getDescription());
                         }
                         if (subint == 0) {
-                            ForumActivitySubmenu.Subtitle = error;
-                            ForumActivitySubmenu.loaded = true;
-                        }else if(subint == 1) {
-                            ForumActivityItems.SubtitleOption = error;
-                            ForumActivityItems.loadedOption = true;
-                        }else if(subint == 2) {
-                            ForumActivityItemsSecond.SubtitleOption = error;
-                            ForumActivityItemsSecond.loadedOption = true;
+                            ForumActivitySubmenu.Subtitle = Strings;
+                        } else if (subint == 1) {
+                            ForumActivityItems.SubtitleOption = Strings;
+                        } else if (subint == 2) {
+                            ForumActivityItemsSecond.SubtitleOption = Strings;
+                        }
+                    } catch (InterruptedIOException e){
+                        if (subint == 0) {
+                            ForumActivitySubmenu.timeout = true;
+                        } else if (subint == 1) {
+                            ForumActivityItems.timeout = true;
+                        } else if (subint == 2) {
+                            ForumActivityItemsSecond.timeout = true;
+                        }
+                    } catch (IOException e) {
+                        if (subint == 0) {
+                            ForumActivitySubmenu.error = true;
+                        } else if (subint == 1) {
+                            ForumActivityItems.error = true;
+                        } else if (subint == 2) {
+                            ForumActivityItemsSecond.error = true;
                         }
                     }
+                }else{
+                    if (subint == 0) {
+                        ForumActivitySubmenu.connexionerror = true;
+                    } else if (subint == 1) {
+                        ForumActivityItems.connexionerror = true;
+                    } else if (subint == 2) {
+                        ForumActivityItemsSecond.connexionerror = true;
+                    }
                 }
+            }else{
+                if (subint == 0) {
+                    ForumActivitySubmenu.connexionerror = true;
+                } else if (subint == 1) {
+                    ForumActivityItems.connexionerror = true;
+                } else if (subint == 2) {
+                    ForumActivityItemsSecond.connexionerror = true;
+                }
+            }
+        }else{
+            if (subint == 0) {
+                ForumActivitySubmenu.connexionerror = true;
+            } else if (subint == 1) {
+                ForumActivityItems.connexionerror = true;
+            } else if (subint == 2) {
+                ForumActivityItemsSecond.connexionerror = true;
             }
         }
     }
@@ -491,100 +428,154 @@ public class Connexion {
             if (wifi || !FunApp.preferences.getBoolean("wifionly", true)) {
                 boolean supDeuxG = isSupDeuxG(networkInfo.getSubtype());
                 if (supDeuxG || FunApp.preferences.getBoolean("deuxG", false) || wifi) {
-                    ExecutorService executor = Executors.newSingleThreadExecutor();
-                    Future f = executor.submit(new Runnable() {
-                        public void run() {
-                            try {
-                                Feed feed = RSSReader.ReadRSS(new URL(urlstr));
-                                ArrayList<String> Strings1 = new ArrayList<>();
-                                ArrayList<String> Strings2 = new ArrayList<>();
-                                ArrayList<String> Strings3 = new ArrayList<>();
-                                ArrayList<String> Strings4 = new ArrayList<>();
-                                for (Item item : feed.getItems()) {
-                                    Strings1.add(item.getTitle());
-                                    Strings2.add(item.getContent());
-                                    Strings3.add(item.getFromPubDate());
-                                    Strings4.add(item.getLink());
-                                }
-
-                                if(subint == 0) {
-                                    ForumActivityItems.Title = Strings1;
-                                    ForumActivityItems.Subtitle = Strings2;
-                                    ForumActivityItems.Dates = Strings3;
-                                    ForumActivityItems.Links = Strings4;
-                                    ForumActivityItems.loaded = true;
-                                }else if(subint == 1){
-                                    ForumActivityItemsSecond.Title = Strings1;
-                                    ForumActivityItemsSecond.Subtitle = Strings2;
-                                    ForumActivityItemsSecond.Dates = Strings3;
-                                    ForumActivityItemsSecond.Links = Strings4;
-                                    ForumActivityItemsSecond.loaded = true;
-                                }else if(subint == 2){
-                                    ForumActivityItemsThird.Title = Strings1;
-                                    ForumActivityItemsThird.Subtitle = Strings2;
-                                    ForumActivityItemsThird.Dates = Strings3;
-                                    ForumActivityItemsThird.Links = Strings4;
-                                    ForumActivityItemsThird.loaded = true;
-                                }
-                            } catch (IOException e) {
-                                ArrayList<String> error = new ArrayList<>();
-                                error.add("Erreur réseau !");
-                                ArrayList<String> errorlink = new ArrayList<>();
-                                errorlink.add("");
-
-                                if(subint == 0){
-                                    ForumActivityItems.Title = error;
-                                    ForumActivityItems.Subtitle = error;
-                                    ForumActivityItems.Dates = error;
-                                    ForumActivityItems.Links = errorlink;
-                                    ForumActivityItems.loaded = true;
-                                }else if(subint == 1){
-                                    ForumActivityItemsSecond.Title = error;
-                                    ForumActivityItemsSecond.Subtitle = error;
-                                    ForumActivityItemsSecond.Dates = error;
-                                    ForumActivityItemsSecond.Links = errorlink;
-                                    ForumActivityItemsSecond.loaded = true;
-                                }else if(subint == 2){
-                                    ForumActivityItemsThird.Title = error;
-                                    ForumActivityItemsThird.Subtitle = error;
-                                    ForumActivityItemsThird.Dates = error;
-                                    ForumActivityItemsThird.Links = errorlink;
-                                    ForumActivityItemsThird.loaded = true;
-                                }
-                            }
-                        }
-                    });
                     try {
-                        f.get(6000, TimeUnit.MILLISECONDS);
-                    } catch (InterruptedException | TimeoutException | ExecutionException e) {
-                        f.cancel(true);
-                        ArrayList<String> error = new ArrayList<>();
-                        error.add("Erreur réseau !");
-                        ArrayList<String> errorlink = new ArrayList<>();
-                        errorlink.add("");
+                        Feed feed = RSSReader.ReadRSS(new URL(urlstr));
+                        ArrayList<String> Strings1 = new ArrayList<>();
+                        ArrayList<String> Strings2 = new ArrayList<>();
+                        ArrayList<String> Strings3 = new ArrayList<>();
+                        ArrayList<String> Strings4 = new ArrayList<>();
+                        for (Item item : feed.getItems()) {
+                            Strings1.add(item.getTitle());
+                            Strings2.add(item.getContent());
+                            Strings3.add(item.getFromPubDate());
+                            Strings4.add(item.getLink());
+                        }
 
-                        if(subint == 0){
-                            ForumActivityItems.Title = error;
-                            ForumActivityItems.Subtitle = error;
-                            ForumActivityItems.Dates = error;
-                            ForumActivityItems.Links = errorlink;
-                            ForumActivityItems.loaded = true;
-                        }else if(subint == 1){
-                            ForumActivityItemsSecond.Title = error;
-                            ForumActivityItemsSecond.Subtitle = error;
-                            ForumActivityItemsSecond.Dates = error;
-                            ForumActivityItemsSecond.Links = errorlink;
-                            ForumActivityItemsSecond.loaded = true;
-                        }else if(subint == 2){
-                            ForumActivityItemsThird.Title = error;
-                            ForumActivityItemsThird.Subtitle = error;
-                            ForumActivityItemsThird.Dates = error;
-                            ForumActivityItemsThird.Links = errorlink;
-                            ForumActivityItemsThird.loaded = true;
+                        if (subint == 0) {
+                            ForumActivityItems.Title = Strings1;
+                            ForumActivityItems.Subtitle = Strings2;
+                            ForumActivityItems.Dates = Strings3;
+                            ForumActivityItems.Links = Strings4;
+                        } else if (subint == 1) {
+                            ForumActivityItemsSecond.Title = Strings1;
+                            ForumActivityItemsSecond.Subtitle = Strings2;
+                            ForumActivityItemsSecond.Dates = Strings3;
+                            ForumActivityItemsSecond.Links = Strings4;
+                        } else if (subint == 2) {
+                            ForumActivityItemsThird.Title = Strings1;
+                            ForumActivityItemsThird.Subtitle = Strings2;
+                            ForumActivityItemsThird.Dates = Strings3;
+                            ForumActivityItemsThird.Links = Strings4;
+                        }
+                    } catch (InterruptedIOException e){
+                        if (subint == 0) {
+                            ForumActivitySubmenu.timeout = true;
+                        } else if (subint == 1) {
+                            ForumActivityItems.timeout = true;
+                        } else if (subint == 2) {
+                            ForumActivityItemsSecond.timeout = true;
+                        }
+                    } catch (IOException e) {
+                        if (subint == 0) {
+                            ForumActivitySubmenu.error = true;
+                        } else if (subint == 1) {
+                            ForumActivityItems.error = true;
+                        } else if (subint == 2) {
+                            ForumActivityItemsSecond.error = true;
                         }
                     }
+                }else{
+                    if (subint == 0) {
+                        ForumActivitySubmenu.connexionerror = true;
+                    } else if (subint == 1) {
+                        ForumActivityItems.connexionerror = true;
+                    } else if (subint == 2) {
+                        ForumActivityItemsSecond.connexionerror = true;
+                    }
+                }
+            }else{
+                if (subint == 0) {
+                    ForumActivitySubmenu.connexionerror = true;
+                } else if (subint == 1) {
+                    ForumActivityItems.connexionerror = true;
+                } else if (subint == 2) {
+                    ForumActivityItemsSecond.connexionerror = true;
                 }
             }
+        }else{
+            if (subint == 0) {
+                ForumActivitySubmenu.connexionerror = true;
+            } else if (subint == 1) {
+                ForumActivityItems.connexionerror = true;
+            } else if (subint == 2) {
+                ForumActivityItemsSecond.connexionerror = true;
+            }
+        }
+    }
+
+    public static void getAlerts() {
+        NetworkInfo networkInfo = FunApp.connectivityManager.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()) {
+            boolean wifi = networkInfo.getType() == ConnectivityManager.TYPE_WIFI;
+            if (wifi || !FunApp.preferences.getBoolean("wifionly", true)) {
+                boolean supDeuxG = isSupDeuxG(networkInfo.getSubtype());
+                if (supDeuxG || FunApp.preferences.getBoolean("deuxG", false) || wifi) {
+                    try {
+                        final String donnees = URLEncoder.encode("login", "UTF-8") + "=" + URLEncoder.encode(FunApp.preferences.getString("name", ""), "UTF-8")
+                                + "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(FunApp.preferences.getString("mdp", ""), "UTF-8")
+                                + "&" + URLEncoder.encode("cookie_check", "UTF-8") + "=" + URLEncoder.encode("0", "UTF-8")
+                                + "&" + URLEncoder.encode("_xfToken", "UTF-8") + "=" + URLEncoder.encode("", "UTF-8")
+                                + "&" + URLEncoder.encode("redirect", "UTF-8") + "=" + URLEncoder.encode("https://community.funcraft.net/account/alerts", "UTF-8");
+                        ArrayList<Alert> alerts = AlertsReader.ReadAlerts(donnees);
+
+                        for (Alert a : alerts) {
+                            AlertReaderActivity.Type.add(a.getType());
+                            AlertReaderActivity.Who.add(a.getWho());
+                            AlertReaderActivity.Where.add(a.getWhere());
+                            AlertReaderActivity.Link.add(a.getLink());
+                            AlertReaderActivity.New.add(a.getNew());
+                        }
+                    } catch (InterruptedIOException e){
+                        AlertReaderActivity.timeout = true;
+                    } catch (IOException e) {
+                        AlertReaderActivity.error = true;
+                    }
+                }else{
+                    AlertReaderActivity.connexionerror = true;
+                }
+            }else{
+                AlertReaderActivity.connexionerror = true;
+            }
+        }else{
+            AlertReaderActivity.connexionerror = true;
+        }
+    }
+
+    public static void getConvos() {
+        NetworkInfo networkInfo = FunApp.connectivityManager.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()) {
+            boolean wifi = networkInfo.getType() == ConnectivityManager.TYPE_WIFI;
+            if (wifi || !FunApp.preferences.getBoolean("wifionly", true)) {
+                boolean supDeuxG = isSupDeuxG(networkInfo.getSubtype());
+                if (supDeuxG || FunApp.preferences.getBoolean("deuxG", false) || wifi) {
+                    try {
+                        final String donnees = URLEncoder.encode("login", "UTF-8") + "=" + URLEncoder.encode(FunApp.preferences.getString("name", ""), "UTF-8")
+                                + "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(FunApp.preferences.getString("mdp", ""), "UTF-8")
+                                + "&" + URLEncoder.encode("cookie_check", "UTF-8") + "=" + URLEncoder.encode("0", "UTF-8")
+                                + "&" + URLEncoder.encode("_xfToken", "UTF-8") + "=" + URLEncoder.encode("", "UTF-8")
+                                + "&" + URLEncoder.encode("redirect", "UTF-8") + "=" + URLEncoder.encode("https://community.funcraft.net/conversations", "UTF-8");
+                        ArrayList<Convo> convos = AlertsReader.ReadConvos(donnees);
+
+                        for (Convo c : convos) {
+                            ConvoReaderActivity.Title.add(c.getTitle());
+                            ConvoReaderActivity.LastGuy.add(c.getLastGuy());
+                            ConvoReaderActivity.PubDateMessage.add(c.getPubDateMessage());
+                            ConvoReaderActivity.Lue.add(c.isLue());
+                            ConvoReaderActivity.Link.add(c.getLink());
+                        }
+                    } catch (InterruptedIOException e){
+                        ConvoReaderActivity.timeout = true;
+                    } catch (IOException e) {
+                        ConvoReaderActivity.error = true;
+                    }
+                }else{
+                    ConvoReaderActivity.connexionerror = true;
+                }
+            }else{
+                ConvoReaderActivity.connexionerror = true;
+            }
+        }else{
+            ConvoReaderActivity.connexionerror = true;
         }
     }
 }

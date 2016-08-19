@@ -39,28 +39,27 @@ public class Notifs extends Service {
     }
 
     private long freqtomsconvert(int freq) {
-        switch (freq) {//0:1mn  1:2mn  2:5mn  3:10mn  4:30mn  5:1h  6:2h
+        switch (freq) {//0:2sc  1:10sc  2:30sc  3:1mn  4:10mn  5:30mn  6:1h
             case 0:
-                return 60000;
+                return 2000;
             case 1:
-                return 120000;
+                return 10000;
             case 2:
-                return 300000;
+                return 30000;
             case 3:
-                return 600000;
+                return 60000;
             case 4:
-                return 1800000;
+                return 600000;
             case 5:
-                return 3600000;
+                return 1800000;
             case 6:
-                return 7200000;
+                return 3600000;
         }
         return -1;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        final long time = freqtomsconvert(FunApp.preferences.getInt("freq", 2));
         t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -69,6 +68,8 @@ public class Notifs extends Service {
                         break;
                     }
                     try {
+                        long time = freqtomsconvert(FunApp.preferences.getInt("freq", 2));
+
                         if (!FunApp.preferences.getBoolean("activnotif", true)) {
                             break;
                         }
@@ -77,7 +78,7 @@ public class Notifs extends Service {
                         }
 
                         Connexion.refreshAlerts();
-                        Thread.sleep(1000);
+
                         if (Thread.interrupted()) {
                             break;
                         }
@@ -120,8 +121,14 @@ public class Notifs extends Service {
                                 }
                             }
 
-                            Intent notificationIntent = new Intent(getBaseContext(), NotifsIntentCall.class);
-                            PendingIntent contentIntent = PendingIntent.getService(getBaseContext(), 0, notificationIntent, 0);
+                            Intent notificationIntent;
+                            if(FunApp.alerts[1] > 0){
+                                notificationIntent = new Intent(getBaseContext(), AlertReaderActivity.class);
+                            }else{
+                                notificationIntent = new Intent(getBaseContext(), ConvoReaderActivity.class);
+                            }
+
+                            PendingIntent contentIntent = PendingIntent.getActivity(getBaseContext(), 1, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                             Notification.Builder notifbuilder = new Notification.Builder(getBaseContext())
                                     .setContentTitle(s)
                                     .setContentText("Notifications du forum Funcraft")
@@ -172,7 +179,7 @@ public class Notifs extends Service {
                             } catch (NullPointerException ignored) {
                             }
                         }
-                        Thread.sleep(time - 1000);
+                        Thread.sleep(time);
                     } catch (InterruptedException e) {
                         break;
                     }

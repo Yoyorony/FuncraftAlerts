@@ -16,7 +16,7 @@ import java.io.StringWriter;
 public class FunApp extends Application {
     public static ConnectivityManager connectivityManager;
     public static SharedPreferences preferences;
-    public static int[] alerts = new int[]{0, 0};
+    public static int[] alerts = new int[]{0, 0}; //alerts[0] -> convos   alerts[1] -> alertes
     public static SharedPreferences.Editor preferenceseditor;
     public static boolean timerStopRecherche = false;
     public static boolean majdispo;

@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,20 +15,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class ForumActivitySubmenu extends AppCompatActivity {
+public class AlertReaderActivity extends AppCompatActivity {
     public static ListView listviexRSS = null;
     public static SwipeRefreshLayout swiper = null;
-    public static ArrayList<String> Subtitle = new ArrayList<>();
-    public static int selection = -1;
-    public static CustomBaseAdapterSubmenu adapter;
+    public static ArrayList<String> Who;
+    public static ArrayList<String> Where;
+    public static ArrayList<Integer> Type;
+    public static ArrayList<String> Link;
+    public static ArrayList<Boolean> New;
+    public static ArrayList<String> Date; //TODO date
+    public static CustomBaseAdapterAlerts adapter;
     public static AlertDialog waitDialog;
     public static AlertDialog timeoutDialog;
     public static AlertDialog errorDialog;
@@ -34,66 +39,61 @@ public class ForumActivitySubmenu extends AppCompatActivity {
     public static boolean timeout;
     public static boolean error;
     public static boolean connexionerror;
-    private OnItemClickListener ListViewListener = new OnItemClickListener() {
+    private AdapterView.OnItemClickListener ListViewListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            selection = position;
-            startActivity(new Intent(getBaseContext(), ForumActivityItems.class));
+            Intent browserintent = new Intent(Intent.ACTION_VIEW, Uri.parse(Link.get(position)));
+            browserintent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(browserintent);
         }
     };
     private SwipeRefreshLayout.OnRefreshListener SwiperListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
-            new DownloadSubmenu().execute();
+            new DownloadAlerts().execute();
         }
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
-        setContentView(R.layout.activity_apercuforum);
+        setContentView(R.layout.activity_apercualerts);
         super.onCreate(savedInstanceState);
+
+        this.setTitle("Aperçu des alertes");
 
         buildDialogs();
         waitDialog.show();
 
-        switch (ForumActivity.selection) {
-            case 0:
-                this.setTitle("Forum - Funcraft");
-                break;
-            case 1:
-                this.setTitle("Forum - Serveur et mini-jeu");
-                break;
-            case 2:
-                this.setTitle("Forum - Hors Mincraft");
-                break;
-            case 3:
-                this.setTitle("forum - Minecraft");
-                break;
-        }
-
-        listviexRSS = (ListView) findViewById(R.id.listViewRSS);
-        swiper = (SwipeRefreshLayout) findViewById(R.id.swipeRSS);
+        listviexRSS = (ListView) findViewById(R.id.listViewAlerts);
+        swiper = (SwipeRefreshLayout) findViewById(R.id.swipeAlerts);
 
         swiper.setOnRefreshListener(SwiperListener);
 
-        adapter = new CustomBaseAdapterSubmenu(this, new ArrayList<StringsForAdapterSubmenu>());
+        adapter = new CustomBaseAdapterAlerts(this, new ArrayList<StringsForAdapterAlerts>());
         listviexRSS.setAdapter(adapter);
 
         listviexRSS.setOnItemClickListener(ListViewListener);
 
-        new DownloadSubmenu().execute();
+        new DownloadAlerts().execute();
     }
 
-    private class DownloadSubmenu extends AsyncTask<Void, Void, ArrayList<StringsForAdapterSubmenu>> {
+    private class DownloadAlerts extends AsyncTask<Void, Void, ArrayList<StringsForAdapterAlerts>> {
         @Override
-        protected ArrayList<StringsForAdapterSubmenu> doInBackground(Void... v) {
+        protected ArrayList<StringsForAdapterAlerts> doInBackground(Void... v) {
             return getStringsAdapter();
         }
 
-        protected void onPreExecute(){timeout = false; error = false; connexionerror = false;}
+        protected void onPreExecute(){
+            timeout = false; error = false; connexionerror = false;
+            Who = new ArrayList<>();
+            Where = new ArrayList<>();
+            Type = new ArrayList<>();
+            Link = new ArrayList<>();
+            New = new ArrayList<>();
+        }
 
-        protected void onPostExecute(ArrayList<StringsForAdapterSubmenu> forumList){
+        protected void onPostExecute(ArrayList<StringsForAdapterAlerts> forumList){
             if(timeout){
                 waitDialog.dismiss();
                 timeoutDialog.show();
@@ -152,6 +152,8 @@ public class ForumActivitySubmenu extends AppCompatActivity {
         });
         errorDialog = errorDialogBuilder.create();
 
+
+
         final ProgressDialog.Builder connexionerrorDialogBuilder = new ProgressDialog.Builder(this);
         view = this.getLayoutInflater().inflate(R.layout.alertdialogue, null);
         ((TextView) view.findViewById(R.id.alertDialogTitle)).setText(R.string.noconnexiontitle);
@@ -168,47 +170,18 @@ public class ForumActivitySubmenu extends AppCompatActivity {
         connexionerrorDialog = connexionerrorDialogBuilder.create();
     }
 
-    private ArrayList<StringsForAdapterSubmenu> getStringsAdapter() {
-        ArrayList<StringsForAdapterSubmenu> Strings = new ArrayList<>();
+    private ArrayList<StringsForAdapterAlerts> getStringsAdapter() {
+        ArrayList<StringsForAdapterAlerts> Strings = new ArrayList<>();
 
-        StringsForAdapterSubmenu s;
-        ArrayList<String> list1 = new ArrayList<>();
-        switch (ForumActivity.selection) {
-            case 0:
-                Connexion.getSubmenuSubtitles(new String[]{"https://community.funcraft.net/forums/annonces-regles.2/index.rss",
-                        "https://community.funcraft.net/forums/recrutement-staff.5/index.rss"}, 0);
-                list1.addAll(Arrays.asList(getResources().getStringArray(R.array.Forums0Title)));
-                break;
-            case 1:
-                Connexion.getSubmenuSubtitles(new String[]{"https://community.funcraft.net/forums/discussions.7/index.rss",
-                        "https://community.funcraft.net/forums/teams.41/index.rss",
-                        "https://community.funcraft.net/forums/suggestions-idees.13/index.rss",
-                        "https://community.funcraft.net/forums/astuces-entraide.21/index.rss",
-                        "https://community.funcraft.net/forums/signaler-un-bug.20/index.rss"}, 0);
+        Connexion.getAlerts();
 
-                list1.addAll(Arrays.asList(getResources().getStringArray(R.array.Forums1Title)));
-                break;
-            case 2:
-                Connexion.getSubmenuSubtitles(new String[]{"https://community.funcraft.net/forums/hors-sujet.9/index.rss",
-                        "https://community.funcraft.net/forums/presentez-vous.8/index.rss",
-                        "https://community.funcraft.net/forums/vos-talents-creations.29/index.rss"}, 0);
+        for (int i = 0; i < Who.size(); i++) {
+            StringsForAdapterAlerts s = new StringsForAdapterAlerts();
 
-                list1.addAll(Arrays.asList(getResources().getStringArray(R.array.Forums2Title)));
-                break;
-            case 3:
-                Connexion.getSubmenuSubtitles(new String[]{"https://community.funcraft.net/forums/discussions-minecraft.36/index.rss",
-                        "https://community.funcraft.net/forums/resource-packs.33/index.rss",
-                        "https://community.funcraft.net/forums/maps-constructions-redstone.34/index.rss",
-                        "https://community.funcraft.net/forums/mods-plugins-outils.35/index.rss"}, 0);
-
-                list1.addAll(Arrays.asList(getResources().getStringArray(R.array.Forums3Title)));
-                break;
-        }
-
-        for (int i = 0; i < Subtitle.size(); i++) {
-            s = new StringsForAdapterSubmenu();
-            s.setTitle(list1.get(i));
-            s.setSubtitle(Subtitle.get(i));
+            s.setWho(Who.get(i));
+            s.setWhere(Where.get(i));
+            s.setImageResID(Type.get(i));
+            s.setNew(New.get(i));
             Strings.add(s);
         }
 
@@ -216,37 +189,79 @@ public class ForumActivitySubmenu extends AppCompatActivity {
     }
 }
 
-class StringsForAdapterSubmenu {
-    private String title = "";
-    private String subtitle = "";
+class StringsForAdapterAlerts {
+    private String who = "";
+    private String where = "";
+    private boolean neww = false;
+    private int imageResID;
 
-    public String getTitle() {
-        return title;
+    public String getWho() {
+        return who;
     }
 
-    public void setTitle(String s) {
-        this.title = s;
+    public void setWho(String s) {
+        this.who = s;
     }
 
-    public String getSubtitle() {
-        return subtitle;
+    public String getWhere() {
+        return where;
     }
 
-    public void setSubtitle(String s) {
-        this.subtitle = s;
+    public void setWhere(String s) {
+        this.where = s;
+    }
+
+    public int getImageResID(){
+        return imageResID;
+    }
+
+    public void setImageResID(int type){
+        switch (type){
+            case 0: case 6: case 7: case 8:
+                this.imageResID = R.drawable.ic_reply_black_24dp;
+                break;
+            case 1:
+                this.imageResID = R.drawable.ic_attach_file_black_24dp;
+                break;
+            case 2:
+                this.imageResID = R.drawable.ic_format_quote_black_24dp;
+                break;
+            case 3: case 9:
+                this.imageResID = R.drawable.ic_at_sign;
+                break;
+            case 4: case 10: case 11:
+                this.imageResID = R.drawable.ic_favorite_black_24dp;
+                break;
+            case 5: case 14:
+                this.imageResID = R.drawable.ic_create_black_24dp;
+                break;
+            case 12:
+                this.imageResID = R.drawable.ic_person_add_black_24dp;
+                break;
+            case 13:
+                this.imageResID = R.drawable.ic_cup;
+        }
+    }
+
+    public boolean getNew() {
+        return neww;
+    }
+
+    public void setNew(boolean b){
+        neww = b;
     }
 }
 
-class CustomBaseAdapterSubmenu extends BaseAdapter {
-    private static ArrayList<StringsForAdapterSubmenu> StringArray;
+class CustomBaseAdapterAlerts extends BaseAdapter {
+    private static ArrayList<StringsForAdapterAlerts> StringArray;
     private LayoutInflater Inflater;
 
-    public CustomBaseAdapterSubmenu(Context context, ArrayList<StringsForAdapterSubmenu> Strings) {
+    public CustomBaseAdapterAlerts(Context context, ArrayList<StringsForAdapterAlerts> Strings) {
         StringArray = Strings;
         Inflater = LayoutInflater.from(context);
     }
 
-    public ArrayList<StringsForAdapterSubmenu> getStringArray(){return StringArray;}
+    public ArrayList<StringsForAdapterAlerts> getStringArray() {return StringArray;}
 
     public int getCount() {
         return StringArray.size();
@@ -263,24 +278,34 @@ class CustomBaseAdapterSubmenu extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = Inflater.inflate(R.layout.listviewcustom_submenu, null);
+            convertView = Inflater.inflate(R.layout.listviewcustom_alerts, null);
             holder = new ViewHolder();
-            holder.txtTitle = (TextView) convertView.findViewById(R.id.title);
-            holder.txtSubtitle = (TextView) convertView.findViewById(R.id.subtitle);
+            holder.txtWho = (TextView) convertView.findViewById(R.id.who);
+            holder.txtWhere = (TextView) convertView.findViewById(R.id.where);
+            holder.imgType = (ImageView) convertView.findViewById(R.id.type);
 
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.txtTitle.setText(StringArray.get(position).getTitle());
-        holder.txtSubtitle.setText(StringArray.get(position).getSubtitle());
+        holder.txtWhere.setText(StringArray.get(position).getWhere());
+        holder.imgType.setImageResource(StringArray.get(position).getImageResID());
+
+        if(StringArray.get(position).getNew()){
+            holder.txtWho.setText(StringArray.get(position).getWho() + " " + '\u2731');
+            holder.txtWhere.setTypeface(null, Typeface.BOLD);
+        }else{
+            holder.txtWho.setText(StringArray.get(position).getWho());
+            holder.txtWhere.setTypeface(null, Typeface.NORMAL);
+        }
 
         return convertView;
     }
 
     static class ViewHolder {
-        TextView txtTitle;
-        TextView txtSubtitle;
+        TextView txtWho;
+        TextView txtWhere;
+        ImageView imgType;
     }
 }
