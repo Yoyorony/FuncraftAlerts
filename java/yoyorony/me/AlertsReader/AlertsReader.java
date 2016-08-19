@@ -1,7 +1,5 @@
 package yoyorony.me.AlertsReader;
 
-import android.util.Log;
-
 import org.jsoup.Jsoup;
 
 import java.io.BufferedReader;

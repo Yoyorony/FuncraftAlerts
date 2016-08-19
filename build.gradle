@@ -8,8 +8,8 @@ android {
         applicationId "yoyorony.me.funcraftv2alerts"
         minSdkVersion 16 //presque 15 -> activnotif style
         targetSdkVersion 23
-        versionCode 3
-        versionName "1.0.0"
+        versionCode 4
+        versionName "1.1.0"
     }
     buildTypes {
         release {
@@ -23,6 +23,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.android.support:support-v4:23.1.1'
     compile 'joda-time:joda-time:2.9.3'
     compile 'org.jsoup:jsoup:1.9.2'
 }

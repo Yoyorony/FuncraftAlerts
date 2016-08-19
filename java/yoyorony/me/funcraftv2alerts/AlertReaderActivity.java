@@ -9,12 +9,12 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -24,6 +24,7 @@ import java.util.ArrayList;
 
 public class AlertReaderActivity extends AppCompatActivity {
     public static ListView listviexRSS = null;
+    public static SwipeRefreshLayout swiper = null;
     public static ArrayList<String> Who;
     public static ArrayList<String> Where;
     public static ArrayList<Integer> Type;
@@ -38,12 +39,18 @@ public class AlertReaderActivity extends AppCompatActivity {
     public static boolean timeout;
     public static boolean error;
     public static boolean connexionerror;
-    private OnItemClickListener ListViewListener = new OnItemClickListener() {
+    private AdapterView.OnItemClickListener ListViewListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Intent browserintent = new Intent(Intent.ACTION_VIEW, Uri.parse(Link.get(position)));
             browserintent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(browserintent);
+        }
+    };
+    private SwipeRefreshLayout.OnRefreshListener SwiperListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            new DownloadAlerts().execute();
         }
     };
 
@@ -59,6 +66,9 @@ public class AlertReaderActivity extends AppCompatActivity {
         waitDialog.show();
 
         listviexRSS = (ListView) findViewById(R.id.listViewAlerts);
+        swiper = (SwipeRefreshLayout) findViewById(R.id.swipeAlerts);
+
+        swiper.setOnRefreshListener(SwiperListener);
 
         adapter = new CustomBaseAdapterAlerts(this, new ArrayList<StringsForAdapterAlerts>());
         listviexRSS.setAdapter(adapter);
@@ -99,6 +109,7 @@ public class AlertReaderActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
                 waitDialog.dismiss();
             }
+            swiper.setRefreshing(false);
         }
     }
 

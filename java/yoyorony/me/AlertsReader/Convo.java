@@ -1,7 +1,5 @@
 package yoyorony.me.AlertsReader;
 
-import java.util.ArrayList;
-
 public class Convo {
     private String Title = "";
     private String PubDateMessage = "";

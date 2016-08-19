@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     /**
      * TODO todo :
      * - optimisation/simplification du code (surtout notifs)
-     * - stop restart apres un crash
      * - consult flux de nouvelle
      * - connexion auto when consult
      * - dimunuer le cache de l'application -> restart service every refresh

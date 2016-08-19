@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 
 public class ForumActivityItemsThird extends AppCompatActivity {
     public static ListView listviexRSS = null;
+    public static SwipeRefreshLayout swiper = null;
     public static ArrayList<String> Title = new ArrayList<>();
     public static ArrayList<String> Subtitle = new ArrayList<>();
     public static ArrayList<String> Dates = new ArrayList<>();
@@ -37,6 +39,12 @@ public class ForumActivityItemsThird extends AppCompatActivity {
             startActivity(browserintent);
         }
     };
+    private SwipeRefreshLayout.OnRefreshListener SwiperListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            new DownloadItems().execute();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +58,9 @@ public class ForumActivityItemsThird extends AppCompatActivity {
         waitDialog.show();
 
         listviexRSS = (ListView) findViewById(R.id.listViewRSS);
+        swiper = (SwipeRefreshLayout) findViewById(R.id.swipeRSS);
+
+        swiper.setOnRefreshListener(SwiperListener);
 
         adapter = new CustomBaseAdapterItems(this, new ArrayList<StringsForAdapterItems>());
         listviexRSS.setAdapter(adapter);
@@ -65,7 +76,7 @@ public class ForumActivityItemsThird extends AppCompatActivity {
             return getStringsAdapter();
         }
 
-        protected void onPreExecute(){timeout = false; error = false;}
+        protected void onPreExecute(){timeout = false; error = false; connexionerror = false;}
 
         protected void onPostExecute(ArrayList<StringsForAdapterItems> forumList){
             if(timeout){
@@ -83,6 +94,7 @@ public class ForumActivityItemsThird extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
                 waitDialog.dismiss();
             }
+            swiper.setRefreshing(false);
         }
     }
 

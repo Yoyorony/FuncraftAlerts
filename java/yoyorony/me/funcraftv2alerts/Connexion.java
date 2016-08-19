@@ -5,7 +5,6 @@ import android.net.NetworkInfo;
 import android.os.Looper;
 import android.os.Message;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,17 +15,10 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import javax.net.ssl.HttpsURLConnection;
 

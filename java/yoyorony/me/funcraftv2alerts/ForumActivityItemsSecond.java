@@ -7,8 +7,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -20,6 +20,7 @@ import java.util.Arrays;
 public class ForumActivityItemsSecond extends AppCompatActivity {
     public static ListView listviexRSS = null;
     public static ListView listviexRSSOptions = null;
+    public static SwipeRefreshLayout swiper = null;
     public static ArrayList<String> Title = new ArrayList<>();
     public static ArrayList<String> Subtitle = new ArrayList<>();
     public static ArrayList<String> Dates = new ArrayList<>();
@@ -52,6 +53,12 @@ public class ForumActivityItemsSecond extends AppCompatActivity {
             startActivity(new Intent(getBaseContext(), ForumActivityItemsThird.class));
         }
     };
+    private SwipeRefreshLayout.OnRefreshListener SwiperListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            new DownloadItems().execute();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +75,9 @@ public class ForumActivityItemsSecond extends AppCompatActivity {
 
         listviexRSS = (ListView) findViewById(R.id.listViewRSS);
         listviexRSSOptions = (ListView) findViewById(R.id.listViewRSSOptions);
+        swiper = (SwipeRefreshLayout) findViewById(R.id.swipeRSS);
+
+        swiper.setOnRefreshListener(SwiperListener);
 
         adapter = new CustomBaseAdapterItems(this, new ArrayList<StringsForAdapterItems>());
         listviexRSS.setAdapter(adapter);
@@ -87,7 +97,7 @@ public class ForumActivityItemsSecond extends AppCompatActivity {
             return getStringsAdapter();
         }
 
-        protected void onPreExecute(){timeout = false; error = false;}
+        protected void onPreExecute(){timeout = false; error = false; connexionerror = false;}
 
         protected void onPostExecute(ArrayList<StringsForAdapterItems> forumList){
             if(timeout){
@@ -108,6 +118,7 @@ public class ForumActivityItemsSecond extends AppCompatActivity {
                     waitDialog.dismiss();
                 }
             }
+            swiper.setRefreshing(false);
         }
     }
 
@@ -117,10 +128,10 @@ public class ForumActivityItemsSecond extends AppCompatActivity {
             return getStringsAdapter2();
         }
 
-        protected void onPreExecute(){timeout = false; error = false;}
+        protected void onPreExecute(){timeout = false; error = false; connexionerror = false;}
 
         protected void onPostExecute(ArrayList<StringsForAdapterSubmenu2> forumList){
-            if(!timeout && !error){
+            if(!timeout && !error && !connexionerror){
                 adapter2.getStringArray().clear();
                 adapter2.getStringArray().addAll(forumList);
                 adapter2.notifyDataSetChanged();

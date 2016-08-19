@@ -7,7 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Looper;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,15 +18,12 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class ForumActivitySubmenu extends AppCompatActivity {
     public static ListView listviexRSS = null;
+    public static SwipeRefreshLayout swiper = null;
     public static ArrayList<String> Subtitle = new ArrayList<>();
     public static int selection = -1;
     public static CustomBaseAdapterSubmenu adapter;
@@ -42,6 +39,12 @@ public class ForumActivitySubmenu extends AppCompatActivity {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             selection = position;
             startActivity(new Intent(getBaseContext(), ForumActivityItems.class));
+        }
+    };
+    private SwipeRefreshLayout.OnRefreshListener SwiperListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            new DownloadSubmenu().execute();
         }
     };
 
@@ -70,6 +73,9 @@ public class ForumActivitySubmenu extends AppCompatActivity {
         }
 
         listviexRSS = (ListView) findViewById(R.id.listViewRSS);
+        swiper = (SwipeRefreshLayout) findViewById(R.id.swipeRSS);
+
+        swiper.setOnRefreshListener(SwiperListener);
 
         adapter = new CustomBaseAdapterSubmenu(this, new ArrayList<StringsForAdapterSubmenu>());
         listviexRSS.setAdapter(adapter);
@@ -85,7 +91,7 @@ public class ForumActivitySubmenu extends AppCompatActivity {
             return getStringsAdapter();
         }
 
-        protected void onPreExecute(){timeout = false; error = false;}
+        protected void onPreExecute(){timeout = false; error = false; connexionerror = false;}
 
         protected void onPostExecute(ArrayList<StringsForAdapterSubmenu> forumList){
             if(timeout){
@@ -103,6 +109,7 @@ public class ForumActivitySubmenu extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
                 waitDialog.dismiss();
             }
+            swiper.setRefreshing(false);
         }
     }
 

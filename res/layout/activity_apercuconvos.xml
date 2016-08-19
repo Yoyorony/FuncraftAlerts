@@ -11,9 +11,15 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical" >
 
-    <ListView
-        android:id="@+id/listViewConvos"
+    <android.support.v4.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipeConvos"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp" />
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/listViewConvos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

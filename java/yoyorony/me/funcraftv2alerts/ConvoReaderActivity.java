@@ -9,6 +9,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 
 public class ConvoReaderActivity extends AppCompatActivity {
     public static ListView listviex = null;
+    public static SwipeRefreshLayout swiper = null;
     public static ArrayList<String> Title;
     public static ArrayList<String> PubDateMessage;
     public static ArrayList<String> LastGuy;
@@ -45,11 +47,17 @@ public class ConvoReaderActivity extends AppCompatActivity {
             startActivity(browserintent);
         }
     };
+    private SwipeRefreshLayout.OnRefreshListener SwiperListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            new DownloadConvos().execute();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
-        setContentView(R.layout.activity_apercualerts);
+        setContentView(R.layout.activity_apercuconvos);
         super.onCreate(savedInstanceState);
 
         this.setTitle("Aperçu des conversations");
@@ -57,7 +65,10 @@ public class ConvoReaderActivity extends AppCompatActivity {
         buildDialogs();
         waitDialog.show();
 
-        listviex = (ListView) findViewById(R.id.listViewAlerts);
+        listviex = (ListView) findViewById(R.id.listViewConvos);
+        swiper = (SwipeRefreshLayout) findViewById(R.id.swipeConvos);
+
+        swiper.setOnRefreshListener(SwiperListener);
 
         adapter = new CustomBaseAdapterConvos(ConvoReaderActivity.this, new ArrayList<StringsForAdapterConvos>());
         listviex.setAdapter(adapter);
@@ -98,6 +109,7 @@ public class ConvoReaderActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
                 waitDialog.dismiss();
             }
+            swiper.setRefreshing(false);
         }
     }
 

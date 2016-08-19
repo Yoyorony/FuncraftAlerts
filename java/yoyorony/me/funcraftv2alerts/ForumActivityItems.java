@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import java.util.Arrays;
 public class ForumActivityItems extends AppCompatActivity {
     public static ListView listviexRSS = null;
     public static ListView listviexRSSOptions = null;
+    public static SwipeRefreshLayout swiper = null;
     public static ArrayList<String> Title = new ArrayList<>();
     public static ArrayList<String> Subtitle = new ArrayList<>();
     public static ArrayList<String> Dates = new ArrayList<>();
@@ -55,6 +57,12 @@ public class ForumActivityItems extends AppCompatActivity {
             startActivity(new Intent(getBaseContext(), ForumActivityItemsSecond.class));
         }
     };
+    private SwipeRefreshLayout.OnRefreshListener SwiperListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            new DownloadItems().execute();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +79,9 @@ public class ForumActivityItems extends AppCompatActivity {
 
         listviexRSS = (ListView) findViewById(R.id.listViewRSS);
         listviexRSSOptions = (ListView) findViewById(R.id.listViewRSSOptions);
+        swiper = (SwipeRefreshLayout) findViewById(R.id.swipeRSS);
+
+        swiper.setOnRefreshListener(SwiperListener);
 
         adapter = new CustomBaseAdapterItems(this, new ArrayList<StringsForAdapterItems>());
         listviexRSS.setAdapter(adapter);
@@ -90,7 +101,7 @@ public class ForumActivityItems extends AppCompatActivity {
             return getStringsAdapter();
         }
 
-        protected void onPreExecute(){timeout = false; error = false;}
+        protected void onPreExecute(){timeout = false; error = false; connexionerror = false;}
 
         protected void onPostExecute(ArrayList<StringsForAdapterItems> forumList){
             if(timeout){
@@ -111,6 +122,7 @@ public class ForumActivityItems extends AppCompatActivity {
                     waitDialog.dismiss();
                 }
             }
+            swiper.setRefreshing(false);
         }
     }
 
@@ -120,10 +132,10 @@ public class ForumActivityItems extends AppCompatActivity {
             return getStringsAdapter2();
         }
 
-        protected void onPreExecute(){timeout = false; error = false;}
+        protected void onPreExecute(){timeout = false; error = false; connexionerror = false;}
 
         protected void onPostExecute(ArrayList<StringsForAdapterSubmenu2> forumList){
-            if(!timeout && !error){
+            if(!timeout && !error && !connexionerror){
                 adapter2.getStringArray().clear();
                 adapter2.getStringArray().addAll(forumList);
                 adapter2.notifyDataSetChanged();
@@ -302,7 +314,7 @@ public class ForumActivityItems extends AppCompatActivity {
                 Connexion.getSubmenuSubtitles(new String[]{"https://community.funcraft.net/forums/bugs-traites.23/index.rss"}, 1);
                 list1.addAll(Arrays.asList(getResources().getStringArray(R.array.Forums14Title)));
             }
-        }else if(ForumActivitySubmenu.selection == 2){
+        }else if(ForumActivity.selection == 2){
             if(ForumActivitySubmenu.selection == 0){
                 Connexion.getSubmenuSubtitles(new String[]{"https://community.funcraft.net/forums/les-jeux-forum.10/index.rss"}, 1);
                 list1.addAll(Arrays.asList(getResources().getStringArray(R.array.Forums20Title)));
