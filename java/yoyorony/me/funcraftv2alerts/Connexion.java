@@ -253,32 +253,26 @@ public class Connexion {
             if (wifi || !FunApp.preferences.getBoolean("wifionly", true)) {
                 boolean supDeuxG = isSupDeuxG(networkInfo.getSubtype());
                 if (supDeuxG || FunApp.preferences.getBoolean("deuxG", false) || wifi) {
-                    new Thread(new Runnable() {
-                        public void run() {
-                            try {
-                                URL url = new URL("http://serveur24sur24.free.fr/FuncraftAlerts/currentversion.txt");
-                                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                                connection.setConnectTimeout(10000);
-                                connection.setChunkedStreamingMode(0);
+                    try {
+                        URL url = new URL("http://serveur24sur24.free.fr/FuncraftAlerts/currentversion.txt");
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.setConnectTimeout(10000);
+                        connection.setChunkedStreamingMode(0);
 
-                                int versionserv = 0, versionapp = BuildConfig.VERSION_CODE;
-                                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                                String ligne;
-                                while ((ligne = reader.readLine()) != null) {
-                                    if (!ligne.equals("")) {
-                                        versionserv = Integer.parseInt(ligne.replaceAll("[\\D]", ""));
-                                        break;
-                                    }
-                                }
-
-                                FunApp.majdispo = versionapp < versionserv;
-
-                                connection.disconnect();
-                            } catch (IOException ignored) {
+                        int versionserv = 0, versionapp = BuildConfig.VERSION_CODE;
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        String ligne;
+                        while ((ligne = reader.readLine()) != null) {
+                            if (!ligne.equals("")) {
+                                versionserv = Integer.parseInt(ligne.replaceAll("[\\D]", ""));
+                                break;
                             }
-                            AutoMAJ.reponsed = true;
                         }
-                    }).start();
+
+                        FunApp.majdispo = versionapp < versionserv;
+
+                        connection.disconnect();
+                    } catch (IOException ignored) {}
                 }
             }
         }

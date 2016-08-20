@@ -1,7 +1,9 @@
 package yoyorony.me.funcraftv2alerts;
 
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.Application;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,9 +12,11 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Calendar;
 
 public class FunApp extends Application {
     public static ConnectivityManager connectivityManager;
@@ -66,7 +70,7 @@ public class FunApp extends Application {
         preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         preferenceseditor = preferences.edit();
         if (!isMyServiceRunning(Notifs.class) && preferences.getBoolean("activnotif", true)) {
-            startService(new Intent(getApplicationContext(), Notifs.class));
+            Notifs.setAlarm(getBaseContext());
         }
     }
 

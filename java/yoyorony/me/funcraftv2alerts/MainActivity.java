@@ -2,7 +2,9 @@ package yoyorony.me.funcraftv2alerts;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -33,13 +35,14 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Calendar;
+
 @SuppressLint("InflateParams")
 public class MainActivity extends AppCompatActivity {
     /**
      * TODO todo :
      * - optimisation/simplification du code (surtout notifs)
-     * - consult flux de nouvelle
-     * - dimunuer le cache de l'application -> restart service every refresh
+     * - consult flux de nouvelle (pour 1.2.0)
      * - connect direct consult (doc html pour POST)
      *
      * TODO totest :
@@ -308,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
                                     FunApp.preferenceseditor.putBoolean("deuxG", deuxG.isChecked());
                                     FunApp.preferenceseditor.commit();
                                     if (!isMyServiceRunning(AutoMAJ.class) && FunApp.preferences.getBoolean("automaj", true)) {
-                                        startService(new Intent(getBaseContext(), AutoMAJ.class));
+                                        AutoMAJ.setAlarm(getBaseContext());
                                     } else if (!FunApp.preferences.getBoolean("automaj", true)) {
                                         stopService(new Intent(getBaseContext(), AutoMAJ.class));
                                     }
@@ -393,7 +396,7 @@ public class MainActivity extends AppCompatActivity {
                 FunApp.preferenceseditor.commit();
 
                 if (!isMyServiceRunning(Notifs.class)) {
-                    startService(new Intent(getBaseContext(), Notifs.class));
+                    Notifs.setAlarm(getBaseContext());
                 }
             }
         }
@@ -431,7 +434,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             if (!isMyServiceRunning(Notifs.class)) {
-                startService(new Intent(getBaseContext(), Notifs.class));
+                Notifs.setAlarm(getBaseContext());
             }
         }
 
@@ -593,7 +596,7 @@ public class MainActivity extends AppCompatActivity {
         inflaterDialog = MainActivity.this.getLayoutInflater();
         alertDialog = new AlertDialog.Builder(MainActivity.this);
         if (!isMyServiceRunning(AutoMAJ.class)) {
-            startService(new Intent(getBaseContext(), AutoMAJ.class));
+            AutoMAJ.setAlarm(getBaseContext());
         } else if (FunApp.majdispo) {
             Toast.makeText(MainActivity.this, "Rappel : mise à jour disponible", Toast.LENGTH_LONG).show();
         }

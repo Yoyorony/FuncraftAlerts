@@ -198,7 +198,7 @@ public class ForumActivityItems extends AppCompatActivity {
         final ProgressDialog.Builder connexionerrorDialogBuilder = new ProgressDialog.Builder(this);
         view = this.getLayoutInflater().inflate(R.layout.alertdialogue, null);
         ((TextView) view.findViewById(R.id.alertDialogTitle)).setText(R.string.noconnexiontitle);
-        ((TextView) view.findViewById(R.id.alertDialogMessage)).setText(R.string.nonewversionmessage);
+        ((TextView) view.findViewById(R.id.alertDialogMessage)).setText(R.string.noconnexionmessage);
         connexionerrorDialogBuilder.setCancelable(true);
         connexionerrorDialogBuilder.setView(view);
         connexionerrorDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
