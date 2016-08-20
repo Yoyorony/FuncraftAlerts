@@ -216,10 +216,10 @@ public class AlertsReader {
     }
 
     public static String findPubDate(String str){
-        if(str.contains("<abbr class=\"DateTime\"")){
+        if(str.contains("<abbr class=\"DateTime\"")){ //TODO erreur : il y en a un deuxième avant
             str = str.substring(str.indexOf("<abbr class=\"DateTime\""));
             str = str.substring(str.indexOf(">")+1);
-            return "Le" + str.substring(0, str.indexOf("<"));
+            return "Le " + str.substring(0, str.indexOf("<"));
         }
         str = str.substring(str.indexOf("<span class=\"DateTime\""));
         str = str.substring(str.indexOf(">")+1);

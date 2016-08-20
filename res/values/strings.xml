@@ -45,8 +45,8 @@
     <string name="idsfailmessage">Les identifiants rentrés contiennent des caractères illégaux.\nChangez les puis réessayez.</string>
     <string name="connectsuccestitle">Connexion réussie</string>
     <string name="connectsuccesmessage">Les identifiants sont corrects et ont été enregistrés.\nVous allez maintenant pouvoir recevoir les notifications en temps réel.</string>
-    <string name="unknownerrortitle">Erreur inconnue</string>
-    <string name="unknownerrormessage">Une erreur inconnue est survenue.\nRéessayez plus tard.</string>
+    <string name="unknownerrortitle">Erreur réseau</string>
+    <string name="unknownerrormessage">Une erreur réseau est survenue.\nRéessayez plus tard.</string>
     <string name="timeouttitle">Temps d\'attente trop long</string>
     <string name="timeoutmessage">Le serveur met trop de temps à répondre.\nCela peut venir de votre connexion.</string>
     <string name="invalididstitle">Identifiants invalides</string>

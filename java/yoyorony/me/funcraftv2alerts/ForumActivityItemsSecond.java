@@ -2,6 +2,7 @@ package yoyorony.me.funcraftv2alerts;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -9,8 +10,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -32,8 +37,8 @@ public class ForumActivityItemsSecond extends AppCompatActivity {
     public static boolean timeout;
     public static boolean error;
     public static boolean connexionerror;
-    public static CustomBaseAdapterItems adapter;
-    public static CustomBaseAdapterSubmenu2 adapter2;
+    public static CustomBaseAdapterItems2 adapter;
+    public static CustomBaseAdapterSubmenu3 adapter2;
     public static AlertDialog waitDialog;
     public static AlertDialog timeoutDialog;
     public static AlertDialog errorDialog;
@@ -73,15 +78,17 @@ public class ForumActivityItemsSecond extends AppCompatActivity {
         buildDialogs();
         waitDialog.show();
 
+        Log.d("FAISec", "check 0");
+
         listviexRSS = (ListView) findViewById(R.id.listViewRSS);
         listviexRSSOptions = (ListView) findViewById(R.id.listViewRSSOptions);
         swiper = (SwipeRefreshLayout) findViewById(R.id.swipeRSS);
 
         swiper.setOnRefreshListener(SwiperListener);
 
-        adapter = new CustomBaseAdapterItems(this, new ArrayList<StringsForAdapterItems>());
+        adapter = new CustomBaseAdapterItems2(this, new ArrayList<StringsForAdapterItems2>());
         listviexRSS.setAdapter(adapter);
-        adapter2 = new CustomBaseAdapterSubmenu2(this, new ArrayList<StringsForAdapterSubmenu2>());
+        adapter2 = new CustomBaseAdapterSubmenu3(this, new ArrayList<StringsForAdapterSubmenu3>());
         listviexRSSOptions.setAdapter(adapter2);
 
         listviexRSS.setOnItemClickListener(ListViewListener);
@@ -91,15 +98,21 @@ public class ForumActivityItemsSecond extends AppCompatActivity {
         new DownloadSubmenu2().execute();
     }
 
-    private class DownloadItems extends AsyncTask<Void, Void, ArrayList<StringsForAdapterItems>> {
+    private class DownloadItems extends AsyncTask<Void, Void, ArrayList<StringsForAdapterItems2>> {
         @Override
-        protected ArrayList<StringsForAdapterItems> doInBackground(Void... v) {
+        protected ArrayList<StringsForAdapterItems2> doInBackground(Void... v) {
             return getStringsAdapter();
         }
 
-        protected void onPreExecute(){timeout = false; error = false; connexionerror = false;}
+        protected void onPreExecute(){
+            timeout = false; error = false; connexionerror = false;
+            Title = new ArrayList<>();
+            Subtitle = new ArrayList<>();
+            Dates = new ArrayList<>();
+            Links = new ArrayList<>();
+        }
 
-        protected void onPostExecute(ArrayList<StringsForAdapterItems> forumList){
+        protected void onPostExecute(ArrayList<StringsForAdapterItems2> forumList){
             if(timeout){
                 waitDialog.dismiss();
                 timeoutDialog.show();
@@ -122,18 +135,22 @@ public class ForumActivityItemsSecond extends AppCompatActivity {
         }
     }
 
-    private class DownloadSubmenu2 extends AsyncTask<Void, Void, ArrayList<StringsForAdapterSubmenu2>> {
+    private class DownloadSubmenu2 extends AsyncTask<Void, Void, ArrayList<StringsForAdapterSubmenu3>> {
         @Override
-        protected ArrayList<StringsForAdapterSubmenu2> doInBackground(Void... v) {
+        protected ArrayList<StringsForAdapterSubmenu3> doInBackground(Void... v) {
             return getStringsAdapter2();
         }
 
-        protected void onPreExecute(){timeout = false; error = false; connexionerror = false;}
+        protected void onPreExecute(){
+            timeout = false; error = false; connexionerror = false;
+            SubtitleOption = new ArrayList<>();
+        }
 
-        protected void onPostExecute(ArrayList<StringsForAdapterSubmenu2> forumList){
+        protected void onPostExecute(ArrayList<StringsForAdapterSubmenu3> forumList){
             if(!timeout && !error && !connexionerror){
                 adapter2.getStringArray().clear();
                 adapter2.getStringArray().addAll(forumList);
+                Log.d("FAISec", "check 1");
                 adapter2.notifyDataSetChanged();
                 submenuLoaded = true;
                 if(itemsLoaded){
@@ -226,10 +243,10 @@ public class ForumActivityItemsSecond extends AppCompatActivity {
         return "Forum";
     }
 
-    private ArrayList<StringsForAdapterItems> getStringsAdapter() {
-        ArrayList<StringsForAdapterItems> Strings = new ArrayList<>();
+    private ArrayList<StringsForAdapterItems2> getStringsAdapter() {
+        ArrayList<StringsForAdapterItems2> Strings = new ArrayList<>();
 
-        StringsForAdapterItems s;
+        StringsForAdapterItems2 s;
         switch (ForumActivity.selection) {
             case 1:
                 switch (ForumActivitySubmenu.selection) {
@@ -277,7 +294,7 @@ public class ForumActivityItemsSecond extends AppCompatActivity {
         }
 
         for (int i = 0; i < Title.size(); i++) {
-            s = new StringsForAdapterItems();
+            s = new StringsForAdapterItems2();
             s.setTitle(Title.get(i));
             s.setSubtitle(Subtitle.get(i));
             s.setDates(Dates.get(i));
@@ -287,11 +304,12 @@ public class ForumActivityItemsSecond extends AppCompatActivity {
         return Strings;
     }
 
-    private ArrayList<StringsForAdapterSubmenu2> getStringsAdapter2() {
-        ArrayList<StringsForAdapterSubmenu2> Strings = new ArrayList<>();
+    private ArrayList<StringsForAdapterSubmenu3> getStringsAdapter2() {
+        ArrayList<StringsForAdapterSubmenu3> Strings = new ArrayList<>();
 
-        StringsForAdapterSubmenu2 s;
+        StringsForAdapterSubmenu3 s;
         ArrayList<String> list1 = new ArrayList<>();
+
         if(ForumActivity.selection == 1){
             if(ForumActivitySubmenu.selection == 2){
                 if(ForumActivityItems.selection == 0){
@@ -307,12 +325,162 @@ public class ForumActivityItemsSecond extends AppCompatActivity {
         }
 
         for (int i = 0; i < SubtitleOption.size(); i++) {
-            s = new StringsForAdapterSubmenu2();
+            s = new StringsForAdapterSubmenu3();
             s.setTitle(list1.get(i));
             s.setSubtitle(SubtitleOption.get(i));
             Strings.add(s);
         }
 
         return Strings;
+    }
+}
+
+class StringsForAdapterItems2 {
+    private String title = "";
+    private String subtitle = "";
+    private String dates = "";
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String s) {
+        this.title = s;
+    }
+
+    public String getSubtitle() {
+        return subtitle;
+    }
+
+    public void setSubtitle(String s) {
+        this.subtitle = s;
+    }
+
+    public String getDates() {
+        return dates;
+    }
+
+    public void setDates(String s) {
+        this.dates = s;
+    }
+}
+
+class CustomBaseAdapterItems2 extends BaseAdapter {
+    private static ArrayList<StringsForAdapterItems2> StringArray;
+    private LayoutInflater Inflater;
+
+    public CustomBaseAdapterItems2(Context context, ArrayList<StringsForAdapterItems2> Strings) {
+        StringArray = Strings;
+        Inflater = LayoutInflater.from(context);
+    }
+
+    public ArrayList<StringsForAdapterItems2> getStringArray(){return StringArray;}
+
+    public int getCount() {
+        return StringArray.size();
+    }
+
+    public Object getItem(int position) {
+        return StringArray.get(position);
+    }
+
+    public long getItemId(int position) {
+        return position;
+    }
+
+    public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder holder;
+        if (convertView == null) {
+            convertView = Inflater.inflate(R.layout.listviewcustom_items, null);
+            holder = new ViewHolder();
+            holder.txtTitle = (TextView) convertView.findViewById(R.id.title);
+            holder.txtSubtitle = (TextView) convertView.findViewById(R.id.subtitle);
+            holder.txtDates = (TextView) convertView.findViewById(R.id.dates);
+
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        holder.txtTitle.setText(StringArray.get(position).getTitle());
+        holder.txtSubtitle.setText(StringArray.get(position).getSubtitle());
+        holder.txtDates.setText(StringArray.get(position).getDates());
+
+        return convertView;
+    }
+
+    static class ViewHolder {
+        TextView txtTitle;
+        TextView txtSubtitle;
+        TextView txtDates;
+    }
+}
+
+class StringsForAdapterSubmenu3 {
+    private String title = "";
+    private String subtitle = "";
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String s) {
+        this.title = s;
+    }
+
+    public String getSubtitle() {
+        return subtitle;
+    }
+
+    public void setSubtitle(String s) {
+        this.subtitle = s;
+    }
+}
+
+class CustomBaseAdapterSubmenu3 extends BaseAdapter {
+    private static ArrayList<StringsForAdapterSubmenu3> StringArray;
+    private LayoutInflater Inflater;
+
+    public CustomBaseAdapterSubmenu3(Context context, ArrayList<StringsForAdapterSubmenu3> Strings) {
+        StringArray = Strings;
+        Inflater = LayoutInflater.from(context);
+    }
+
+    public ArrayList<StringsForAdapterSubmenu3> getStringArray(){return StringArray;}
+
+    public int getCount() {
+        return StringArray.size();
+    }
+
+    public Object getItem(int position) {
+        return StringArray.get(position);
+    }
+
+    public long getItemId(int position) {
+        return position;
+    }
+
+    public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder holder;
+        if (convertView == null) {
+            convertView = Inflater.inflate(R.layout.listviewcustom_submenu, null);
+            holder = new ViewHolder();
+            holder.txtTitle = (TextView) convertView.findViewById(R.id.title);
+            holder.txtSubtitle = (TextView) convertView.findViewById(R.id.subtitle);
+
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        holder.txtTitle.setText(StringArray.get(position).getTitle());
+        holder.txtSubtitle.setText(StringArray.get(position).getSubtitle());
+
+        return convertView;
+    }
+
+    static class ViewHolder {
+        TextView txtTitle;
+        TextView txtSubtitle;
     }
 }

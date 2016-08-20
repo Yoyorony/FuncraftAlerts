@@ -101,7 +101,13 @@ public class ForumActivityItems extends AppCompatActivity {
             return getStringsAdapter();
         }
 
-        protected void onPreExecute(){timeout = false; error = false; connexionerror = false;}
+        protected void onPreExecute(){
+            timeout = false; error = false; connexionerror = false;
+            Title = new ArrayList<>();
+            Subtitle = new ArrayList<>();
+            Dates = new ArrayList<>();
+            Links = new ArrayList<>();
+        }
 
         protected void onPostExecute(ArrayList<StringsForAdapterItems> forumList){
             if(timeout){
@@ -132,7 +138,10 @@ public class ForumActivityItems extends AppCompatActivity {
             return getStringsAdapter2();
         }
 
-        protected void onPreExecute(){timeout = false; error = false; connexionerror = false;}
+        protected void onPreExecute(){
+            timeout = false; error = false; connexionerror = false;
+            SubtitleOption = new ArrayList<>();
+        }
 
         protected void onPostExecute(ArrayList<StringsForAdapterSubmenu2> forumList){
             if(!timeout && !error && !connexionerror){

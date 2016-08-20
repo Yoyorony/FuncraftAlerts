@@ -76,7 +76,13 @@ public class ForumActivityItemsThird extends AppCompatActivity {
             return getStringsAdapter();
         }
 
-        protected void onPreExecute(){timeout = false; error = false; connexionerror = false;}
+        protected void onPreExecute(){
+            timeout = false; error = false; connexionerror = false;
+            Title = new ArrayList<>();
+            Subtitle = new ArrayList<>();
+            Dates = new ArrayList<>();
+            Links = new ArrayList<>();
+        }
 
         protected void onPostExecute(ArrayList<StringsForAdapterItems> forumList){
             if(timeout){

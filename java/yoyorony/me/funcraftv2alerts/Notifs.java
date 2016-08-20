@@ -98,7 +98,8 @@ public class Notifs extends Service {
                                 && (FunApp.preferences.getBoolean("alerts", true) || FunApp.preferences.getBoolean("convos", true))
                                 && (FunApp.alerts[0] != MainActivity.currentnotifcontent[0] || FunApp.alerts[1] != MainActivity.currentnotifcontent[1])
                                 && ((FunApp.alerts[0] != 0 && FunApp.preferences.getBoolean("convos", true)) || (FunApp.alerts[1] != 0 && FunApp.preferences.getBoolean("alerts", true)))
-                                && !FunApp.timerStopRecherche) {
+                                && !FunApp.timerStopRecherche
+                                && !FunApp.preferences.getString("name", "").equals("")) {
 
                             String s = "";
                             if (FunApp.preferences.getBoolean("alerts", true)) {
