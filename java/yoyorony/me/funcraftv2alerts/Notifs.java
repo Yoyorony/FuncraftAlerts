@@ -68,9 +68,11 @@ public class Notifs extends IntentService {
         Context context = getBaseContext();
 
         if (!FunApp.preferences.getBoolean("activnotif", true)) {
+            setAlarm(getBaseContext());
             stopSelf();
         }
         if (FunApp.preferences.getString("name", "").equals("") || FunApp.preferences.getString("mdp", "").equals("")) {
+            setAlarm(getBaseContext());
             stopSelf();
         }
 

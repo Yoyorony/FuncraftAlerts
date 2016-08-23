@@ -66,9 +66,8 @@ public class AutoMAJ extends IntentService {
                     notifmanager.notify(2102, notif);
                 }
             }
-        } else {
-            stopSelf();
         }
+        setAlarm(getBaseContext());
     }
 
     public static void setAlarm(Context context) {
