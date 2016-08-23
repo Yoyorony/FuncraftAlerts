@@ -2,28 +2,36 @@ package yoyorony.me.funcraftv2alerts;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class ForumActivityItemsThird extends AppCompatActivity {
-    public static ListView listviexRSS = null;
+public class ConvoReaderActivity extends AppCompatActivity {
+    public static ListView listviex = null;
     public static SwipeRefreshLayout swiper = null;
-    public static ArrayList<String> Title = new ArrayList<>();
-    public static ArrayList<String> Subtitle = new ArrayList<>();
-    public static ArrayList<String> Dates = new ArrayList<>();
-    public static ArrayList<String> Links = new ArrayList<>();
-    public static CustomBaseAdapterItems adapter;
+    public static ArrayList<String> Title;
+    public static ArrayList<String> PubDateMessage;
+    public static ArrayList<String> LastGuy;
+    public static ArrayList<Boolean> Lue;
+    public static ArrayList<String> Link;
+    public static CustomBaseAdapterConvos adapter;
     public static AlertDialog waitDialog;
     public static AlertDialog timeoutDialog;
     public static AlertDialog errorDialog;
@@ -31,10 +39,10 @@ public class ForumActivityItemsThird extends AppCompatActivity {
     public static boolean timeout;
     public static boolean error;
     public static boolean connexionerror;
-    private AdapterView.OnItemClickListener ListViewListener = new AdapterView.OnItemClickListener() {
+    private OnItemClickListener ListViewListener = new OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Intent browserintent = new Intent(Intent.ACTION_VIEW, Uri.parse(Links.get(position)));
+            Intent browserintent = new Intent(Intent.ACTION_VIEW, Uri.parse(Link.get(position)));
             browserintent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(browserintent);
         }
@@ -42,49 +50,50 @@ public class ForumActivityItemsThird extends AppCompatActivity {
     private SwipeRefreshLayout.OnRefreshListener SwiperListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
-            new DownloadItems().execute();
+            new DownloadConvos().execute();
         }
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
-        setContentView(R.layout.activity_apercuforum);
+        setContentView(R.layout.activity_apercuconvos);
         super.onCreate(savedInstanceState);
 
-        this.setTitle(getActTitle());
+        this.setTitle("Aperçu des conversations");
 
         buildDialogs();
         waitDialog.show();
 
-        listviexRSS = (ListView) findViewById(R.id.listViewRSS);
-        swiper = (SwipeRefreshLayout) findViewById(R.id.swipeRSS);
+        listviex = (ListView) findViewById(R.id.listViewConvos);
+        swiper = (SwipeRefreshLayout) findViewById(R.id.swipeConvos);
 
         swiper.setOnRefreshListener(SwiperListener);
 
-        adapter = new CustomBaseAdapterItems(this, new ArrayList<StringsForAdapterItems>());
-        listviexRSS.setAdapter(adapter);
+        adapter = new CustomBaseAdapterConvos(ConvoReaderActivity.this, new ArrayList<StringsForAdapterConvos>());
+        listviex.setAdapter(adapter);
 
-        listviexRSS.setOnItemClickListener(ListViewListener);
+        listviex.setOnItemClickListener(ListViewListener);
 
-        new DownloadItems().execute();
+        new DownloadConvos().execute();
     }
 
-    private class DownloadItems extends AsyncTask<Void, Void, ArrayList<StringsForAdapterItems>> {
+    private class DownloadConvos extends AsyncTask<Void, Void, ArrayList<StringsForAdapterConvos>>{
         @Override
-        protected ArrayList<StringsForAdapterItems> doInBackground(Void... v) {
+        protected ArrayList<StringsForAdapterConvos> doInBackground(Void... v) {
             return getStringsAdapter();
         }
 
         protected void onPreExecute(){
             timeout = false; error = false; connexionerror = false;
+            Link = new ArrayList<>();
+            Lue = new ArrayList<>();
+            LastGuy = new ArrayList<>();
+            PubDateMessage = new ArrayList<>();
             Title = new ArrayList<>();
-            Subtitle = new ArrayList<>();
-            Dates = new ArrayList<>();
-            Links = new ArrayList<>();
         }
 
-        protected void onPostExecute(ArrayList<StringsForAdapterItems> forumList){
+        protected void onPostExecute(ArrayList<StringsForAdapterConvos> forumList){
             if(timeout){
                 waitDialog.dismiss();
                 timeoutDialog.show();
@@ -159,47 +168,129 @@ public class ForumActivityItemsThird extends AppCompatActivity {
         connexionerrorDialog = connexionerrorDialogBuilder.create();
     }
 
-    private String getActTitle(){
-        return "Forum - " + getResources().getStringArray(R.array.Forums110Title)[ForumActivityItemsSecond.selection];
-    }
+    private ArrayList<StringsForAdapterConvos> getStringsAdapter() {
+        ArrayList<StringsForAdapterConvos> Strings = new ArrayList<>();
 
-    private ArrayList<StringsForAdapterItems> getStringsAdapter() {
-        ArrayList<StringsForAdapterItems> Strings = new ArrayList<>();
-
-        StringsForAdapterItems s;
-        if(ForumActivity.selection == 1 && ForumActivitySubmenu.selection == 2){
-            switch (ForumActivityItems.selection){
-                case 0:
-                    switch (ForumActivityItemsSecond.selection){
-                        case 0:
-                            Connexion.getItemsFeed("https://community.funcraft.net/forums/ameliorations-acceptees.16/index.rss", 2);
-                            break;
-                        case 1:
-                            Connexion.getItemsFeed("https://community.funcraft.net/forums/ameliorations-refusees.17/index.rss", 2);
-                            break;
-                    }
-                    break;
-                case 1:
-                    switch (ForumActivityItemsSecond.selection){
-                        case 0:
-                            Connexion.getItemsFeed("https://community.funcraft.net/forums/propositions-acceptees.18/index.rss", 2);
-                            break;
-                        case 1:
-                            Connexion.getItemsFeed("https://community.funcraft.net/forums/propositions-refusees.19/index.rss", 2);
-                            break;
-                    }
-                    break;
-            }
-        }
+        Connexion.getConvos();
 
         for (int i = 0; i < Title.size(); i++) {
-            s = new StringsForAdapterItems();
+            StringsForAdapterConvos s = new StringsForAdapterConvos();
+
             s.setTitle(Title.get(i));
-            s.setSubtitle(Subtitle.get(i));
-            s.setDates(Dates.get(i));
+            s.setLastGuy(LastGuy.get(i));
+            s.setPubDateMessage(PubDateMessage.get(i));
+            s.setLue(Lue.get(i));
             Strings.add(s);
         }
 
         return Strings;
+    }
+}
+
+class StringsForAdapterConvos {
+    private String Title = "";
+    private String PubDateMessage = "";
+    private String LastGuy;
+    private int Lue;
+    private boolean LueBool;
+
+    public void setTitle(String title) {
+        Title = title;
+    }
+
+    public String getTitle() {
+        return Title;
+    }
+
+    public void setPubDateMessage(String pubDateMessage) {
+        PubDateMessage = pubDateMessage;
+    }
+
+    public String getPubDateMessage() {
+        return PubDateMessage;
+    }
+
+    public void setLastGuy(String lastGuy) {
+        LastGuy = lastGuy;
+    }
+
+    public String getLastGuy() {
+        return LastGuy;
+    }
+
+    public void setLue(boolean lue) {
+        if(lue){Lue = R.drawable.ic_drafts_black_24dp;}
+        else{Lue = R.drawable.ic_mail_black_24dp;}
+        LueBool = lue;
+    }
+
+    public int getLue() {
+        return Lue;
+    }
+
+    public boolean getLueBool() {
+        return LueBool;
+    }
+}
+
+class CustomBaseAdapterConvos extends BaseAdapter {
+    private static ArrayList<StringsForAdapterConvos> StringArray;
+    private LayoutInflater Inflater;
+
+    public CustomBaseAdapterConvos(Context context, ArrayList<StringsForAdapterConvos> Strings) {
+        StringArray = Strings;
+        Inflater = LayoutInflater.from(context);
+    }
+
+    public ArrayList<StringsForAdapterConvos> getStringArray(){return StringArray;}
+
+    public int getCount() {
+        return StringArray.size();
+    }
+
+    public Object getItem(int position) {
+        return StringArray.get(position);
+    }
+
+    public long getItemId(int position) {
+        return position;
+    }
+
+    public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder holder;
+        if (convertView == null) {
+            convertView = Inflater.inflate(R.layout.listviewcustom_convos, null);
+            holder = new ViewHolder();
+            holder.txtTitle = (TextView) convertView.findViewById(R.id.title);
+            holder.txtLastGuy = (TextView) convertView.findViewById(R.id.lastguy);
+            holder.txtPubDate = (TextView) convertView.findViewById(R.id.pubdate);
+            holder.imgLue = (ImageView) convertView.findViewById(R.id.lue);
+
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        holder.txtTitle.setText(StringArray.get(position).getTitle());
+        holder.txtLastGuy.setText(StringArray.get(position).getLastGuy());
+        holder.txtPubDate.setText(StringArray.get(position).getPubDateMessage());
+        holder.imgLue.setImageResource(StringArray.get(position).getLue());
+
+        if(!StringArray.get(position).getLueBool()){
+            holder.txtLastGuy.setTypeface(null, Typeface.BOLD);
+            holder.txtPubDate.setTypeface(null, Typeface.BOLD_ITALIC);
+        }else{
+            holder.txtLastGuy.setTypeface(null, Typeface.NORMAL);
+            holder.txtPubDate.setTypeface(null, Typeface.ITALIC);
+        }
+
+        return convertView;
+    }
+
+    static class ViewHolder {
+        TextView txtTitle;
+        TextView txtLastGuy;
+        TextView txtPubDate;
+        ImageView imgLue;
     }
 }

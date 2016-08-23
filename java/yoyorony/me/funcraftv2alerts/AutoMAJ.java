@@ -1,5 +1,7 @@
 package yoyorony.me.funcraftv2alerts;
 
+import android.app.AlarmManager;
+import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -12,10 +14,7 @@ import android.os.Binder;
 import org.joda.time.DateTime;
 import org.joda.time.Hours;
 
-public class AutoMAJ extends Service {
-    public static boolean reponsed = false;
-
-    private Thread t;
+public class AutoMAJ extends IntentService {
 
     public static boolean isTimeToCheck() {
         DateTime lastCheck = null;
@@ -40,70 +39,42 @@ public class AutoMAJ extends Service {
         return true;
     }
 
+    public AutoMAJ(){
+        super("AutoMAJ");
+    }
+
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public void onHandleIntent(Intent intent) {
         if (FunApp.preferences.getBoolean("automaj", true)) {
-            t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (true) {
-                        try {
-                            Thread.sleep(3600000);
-                        } catch (InterruptedException ignored) {
-                            break;
-                        } //1 vérif/heure
-                        if (Thread.interrupted()) {
-                            break;
-                        }
-                        if (isTimeToCheck() && !FunApp.majdispo) {
-                            Connexion.checkVersionSilence();
-                            while (!reponsed) {
-                                try {
-                                    Thread.sleep(500);
-                                } catch (InterruptedException ignored) {
-                                    break;
-                                }
-                            }
+            if (isTimeToCheck() && !FunApp.majdispo) {
+                Connexion.checkVersionSilence();
 
-                            if (FunApp.majdispo) {
-                                Intent notificationIntent = new Intent(getBaseContext(), AutoMAJNotifsIntentCall.class);
-                                PendingIntent contentIntent = PendingIntent.getService(getBaseContext(), 0, notificationIntent, 0);
-                                Notification.Builder notifbuilder = new Notification.Builder(getBaseContext())
-                                        .setContentTitle("Mise à jour de Funcraft disponible")
-                                        .setContentText("Cliquez sur la notification pour la télécharger")
-                                        .setAutoCancel(true)
-                                        .setLargeIcon(BitmapFactory.decodeResource(getBaseContext().getResources(), R.mipmap.ic_launcher))
-                                        .setSmallIcon(R.drawable.ic_stat_name)
-                                        .setTicker("Mise à jour de Funcraft disponible")
-                                        .setContentIntent(contentIntent);
+                if (FunApp.majdispo) {
+                    Intent notificationIntent = new Intent(getBaseContext(), AutoMAJNotifsIntentCall.class);
+                    PendingIntent contentIntent = PendingIntent.getService(getBaseContext(), 0, notificationIntent, 0);
+                    Notification.Builder notifbuilder = new Notification.Builder(getBaseContext())
+                            .setContentTitle("Mise à jour de Funcraft disponible")
+                            .setContentText("Cliquez sur la notification pour la télécharger")
+                            .setAutoCancel(true)
+                            .setLargeIcon(BitmapFactory.decodeResource(getBaseContext().getResources(), R.mipmap.ic_launcher))
+                            .setSmallIcon(R.drawable.ic_stat_name)
+                            .setTicker("Mise à jour de Funcraft disponible")
+                            .setContentIntent(contentIntent);
 
-                                Notification notif = notifbuilder.build();
-                                NotificationManager notifmanager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                                notifmanager.notify(2102, notif);
-                            }
-                        }
-                    }
+                    Notification notif = notifbuilder.build();
+                    NotificationManager notifmanager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    notifmanager.notify(2102, notif);
                 }
-            });
-            t.start();
-            return START_STICKY;
-        } else {
-            stopSelf();
-            return START_NOT_STICKY;
+            }
         }
+        setAlarm(getBaseContext());
     }
 
-    @Override
-    public Binder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        try {
-            t.interrupt();
-        } catch (NullPointerException ignored) {
-        }
+    public static void setAlarm(Context context) {
+        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, AutoMAJ.class);
+        PendingIntent pi = PendingIntent.getService(context, 0, intent, 0);
+        long frequency = 3600000; //1 check/heure
+        am.set(AlarmManager.RTC_WAKEUP, frequency, pi);
     }
 }

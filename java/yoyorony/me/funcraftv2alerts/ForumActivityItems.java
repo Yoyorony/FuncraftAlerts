@@ -1,9 +1,14 @@
 package yoyorony.me.funcraftv2alerts;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,14 +24,24 @@ import java.util.Arrays;
 public class ForumActivityItems extends AppCompatActivity {
     public static ListView listviexRSS = null;
     public static ListView listviexRSSOptions = null;
-    public static ArrayList<String> Title;
-    public static ArrayList<String> Subtitle;
-    public static ArrayList<String> Dates;
-    public static ArrayList<String> Links;
-    public static ArrayList<String> SubtitleOption;
+    public static SwipeRefreshLayout swiper = null;
+    public static ArrayList<String> Title = new ArrayList<>();
+    public static ArrayList<String> Subtitle = new ArrayList<>();
+    public static ArrayList<String> Dates = new ArrayList<>();
+    public static ArrayList<String> Links = new ArrayList<>();
+    public static ArrayList<String> SubtitleOption = new ArrayList<>();
     public static int selection = -1;
-    public static boolean loaded = false;
-    public static boolean loadedOption = false;
+    public static CustomBaseAdapterItems adapter;
+    public static CustomBaseAdapterSubmenu2 adapter2;
+    public static AlertDialog waitDialog;
+    public static AlertDialog timeoutDialog;
+    public static AlertDialog errorDialog;
+    public static AlertDialog connexionerrorDialog;
+    public static boolean itemsLoaded;
+    public static boolean submenuLoaded;
+    public static boolean timeout;
+    public static boolean error;
+    public static boolean connexionerror;
     private AdapterView.OnItemClickListener ListViewListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -42,6 +57,12 @@ public class ForumActivityItems extends AppCompatActivity {
             startActivity(new Intent(getBaseContext(), ForumActivityItemsSecond.class));
         }
     };
+    private SwipeRefreshLayout.OnRefreshListener SwiperListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            new DownloadItems().execute();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,37 +70,172 @@ public class ForumActivityItems extends AppCompatActivity {
         setContentView(R.layout.activity_apercuforum);
         super.onCreate(savedInstanceState);
 
+        this.setTitle(getActTitle());
+
+        itemsLoaded = false; submenuLoaded = false;
+
+        buildDialogs();
+        waitDialog.show();
+
         listviexRSS = (ListView) findViewById(R.id.listViewRSS);
         listviexRSSOptions = (ListView) findViewById(R.id.listViewRSSOptions);
+        swiper = (SwipeRefreshLayout) findViewById(R.id.swipeRSS);
 
-        ArrayList<StringsForAdapterItems> forumList = getStringsAdapter();
-        ArrayList<StringsForAdapterSubmenu2> forumList2 = getStringsAdapter2();
+        swiper.setOnRefreshListener(SwiperListener);
 
-        listviexRSS.setAdapter(new CustomBaseAdapterItems(this, forumList));
-        listviexRSSOptions.setAdapter(new CustomBaseAdapterSubmenu2(this, forumList2));
+        adapter = new CustomBaseAdapterItems(this, new ArrayList<StringsForAdapterItems>());
+        listviexRSS.setAdapter(adapter);
+        adapter2 = new CustomBaseAdapterSubmenu2(this, new ArrayList<StringsForAdapterSubmenu2>());
+        listviexRSSOptions.setAdapter(adapter2);
 
         listviexRSS.setOnItemClickListener(ListViewListener);
         listviexRSSOptions.setOnItemClickListener(ListViewListenerOptions);
+
+        new DownloadItems().execute();
+        new DownloadSubmenu2().execute();
+    }
+
+    private class DownloadItems extends AsyncTask<Void, Void, ArrayList<StringsForAdapterItems>> {
+        @Override
+        protected ArrayList<StringsForAdapterItems> doInBackground(Void... v) {
+            return getStringsAdapter();
+        }
+
+        protected void onPreExecute(){
+            timeout = false; error = false; connexionerror = false;
+            Title = new ArrayList<>();
+            Subtitle = new ArrayList<>();
+            Dates = new ArrayList<>();
+            Links = new ArrayList<>();
+        }
+
+        protected void onPostExecute(ArrayList<StringsForAdapterItems> forumList){
+            if(timeout){
+                waitDialog.dismiss();
+                timeoutDialog.show();
+            }else if(error){
+                waitDialog.dismiss();
+                errorDialog.show();
+            }else if(connexionerror){
+                waitDialog.dismiss();
+                connexionerrorDialog.show();
+            }else{
+                adapter.getStringArray().clear();
+                adapter.getStringArray().addAll(forumList);
+                adapter.notifyDataSetChanged();
+                itemsLoaded = true;
+                if(submenuLoaded){
+                    waitDialog.dismiss();
+                }
+            }
+            swiper.setRefreshing(false);
+        }
+    }
+
+    private class DownloadSubmenu2 extends AsyncTask<Void, Void, ArrayList<StringsForAdapterSubmenu2>> {
+        @Override
+        protected ArrayList<StringsForAdapterSubmenu2> doInBackground(Void... v) {
+            return getStringsAdapter2();
+        }
+
+        protected void onPreExecute(){
+            timeout = false; error = false; connexionerror = false;
+            SubtitleOption = new ArrayList<>();
+        }
+
+        protected void onPostExecute(ArrayList<StringsForAdapterSubmenu2> forumList){
+            if(!timeout && !error && !connexionerror){
+                adapter2.getStringArray().clear();
+                adapter2.getStringArray().addAll(forumList);
+                adapter2.notifyDataSetChanged();
+                submenuLoaded = true;
+                if(itemsLoaded){
+                    waitDialog.dismiss();
+                }
+            }
+        }
+    }
+
+    private void buildDialogs(){
+        final ProgressDialog.Builder waitDialogBuilder = new ProgressDialog.Builder(this);
+        View view = this.getLayoutInflater().inflate(R.layout.waitdialogue, null);
+        ((TextView) view.findViewById(R.id.waitDialogTitle)).setText(R.string.waitTitle);
+        ((TextView) view.findViewById(R.id.waitDialogMessage)).setText(R.string.waitMessage);
+        waitDialogBuilder.setCancelable(false);
+        waitDialogBuilder.setView(view);
+        waitDialog = waitDialogBuilder.create();
+
+        final ProgressDialog.Builder timeoutDialogBuilder = new ProgressDialog.Builder(this);
+        view = this.getLayoutInflater().inflate(R.layout.alertdialogue, null);
+        ((TextView) view.findViewById(R.id.alertDialogTitle)).setText(R.string.timeouttitle);
+        ((TextView) view.findViewById(R.id.alertDialogMessage)).setText(R.string.timeoutmessage);
+        timeoutDialogBuilder.setCancelable(true);
+        timeoutDialogBuilder.setView(view);
+        timeoutDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        timeoutDialog = timeoutDialogBuilder.create();
+
+        final ProgressDialog.Builder errorDialogBuilder = new ProgressDialog.Builder(this);
+        view = this.getLayoutInflater().inflate(R.layout.alertdialogue, null);
+        ((TextView) view.findViewById(R.id.alertDialogTitle)).setText(R.string.connexionfailtitle);
+        ((TextView) view.findViewById(R.id.alertDialogMessage)).setText(R.string.connexionfailmessage);
+        errorDialogBuilder.setCancelable(true);
+        errorDialogBuilder.setView(view);
+        errorDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        errorDialog = errorDialogBuilder.create();
+
+        final ProgressDialog.Builder connexionerrorDialogBuilder = new ProgressDialog.Builder(this);
+        view = this.getLayoutInflater().inflate(R.layout.alertdialogue, null);
+        ((TextView) view.findViewById(R.id.alertDialogTitle)).setText(R.string.noconnexiontitle);
+        ((TextView) view.findViewById(R.id.alertDialogMessage)).setText(R.string.noconnexionmessage);
+        connexionerrorDialogBuilder.setCancelable(true);
+        connexionerrorDialogBuilder.setView(view);
+        connexionerrorDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        connexionerrorDialog = connexionerrorDialogBuilder.create();
+    }
+
+    private String getActTitle(){
+        switch (ForumActivity.selection) {
+            case 0:
+                return "Forum - " + getResources().getStringArray(R.array.Forums0Title)[ForumActivitySubmenu.selection];
+            case 1:
+                return "Forum - " + getResources().getStringArray(R.array.Forums1Title)[ForumActivitySubmenu.selection];
+            case 2:
+                return "Forum - " + getResources().getStringArray(R.array.Forums2Title)[ForumActivitySubmenu.selection];
+            case 3:
+                return "Forum - " + getResources().getStringArray(R.array.Forums3Title)[ForumActivitySubmenu.selection];
+        }
+        return "Forum";
     }
 
     private ArrayList<StringsForAdapterItems> getStringsAdapter() {
         ArrayList<StringsForAdapterItems> Strings = new ArrayList<>();
 
         StringsForAdapterItems s;
-        ArrayList<String> list1 = new ArrayList<>();
-        ArrayList<String> list2 = new ArrayList<>();
-        ArrayList<String> list3 = new ArrayList<>();
-
-        boolean go = false;
         switch (ForumActivity.selection) {
             case 0:
                 switch (ForumActivitySubmenu.selection) {
                     case 0:
-                        go = true;
                         Connexion.getItemsFeed("https://community.funcraft.net/forums/annonces-regles.2/index.rss", 0);
                         break;
                     case 1:
-                        go = true;
                         Connexion.getItemsFeed("https://community.funcraft.net/forums/recrutement-staff.5/index.rss", 0);
                         break;
                 }
@@ -87,23 +243,18 @@ public class ForumActivityItems extends AppCompatActivity {
             case 1:
                 switch (ForumActivitySubmenu.selection) {
                     case 0:
-                        go = true;
                         Connexion.getItemsFeed("https://community.funcraft.net/forums/discussions.7/index.rss", 0);
                         break;
                     case 1:
-                        go = true;
                         Connexion.getItemsFeed("https://community.funcraft.net/forums/teams.41/index.rss", 0);
                         break;
                     case 2:
-                        go = true;
                         Connexion.getItemsFeed("https://community.funcraft.net/forums/suggestions-idees.13/index.rss", 0);
                         break;
                     case 3:
-                        go = true;
                         Connexion.getItemsFeed("https://community.funcraft.net/forums/astuces-entraide.21/index.rss", 0);
                         break;
                     case 4:
-                        go = true;
                         Connexion.getItemsFeed("https://community.funcraft.net/forums/signaler-un-bug.20/index.rss", 0);
                         break;
                 }
@@ -111,15 +262,12 @@ public class ForumActivityItems extends AppCompatActivity {
             case 2:
                 switch (ForumActivitySubmenu.selection) {
                     case 0:
-                        go = true;
                         Connexion.getItemsFeed("https://community.funcraft.net/forums/hors-sujet.9/index.rss", 0);
                         break;
                     case 1:
-                        go = true;
                         Connexion.getItemsFeed("https://community.funcraft.net/forums/presentez-vous.8/index.rss", 0);
                         break;
                     case 2:
-                        go = true;
                         Connexion.getItemsFeed("https://community.funcraft.net/forums/vos-talents-creations.29/index.rss", 0);
                         break;
                 }
@@ -127,43 +275,26 @@ public class ForumActivityItems extends AppCompatActivity {
             case 3:
                 switch (ForumActivitySubmenu.selection) {
                     case 0:
-                        go = true;
                         Connexion.getItemsFeed("https://community.funcraft.net/forums/discussions-minecraft.36/index.rss", 0);
                         break;
                     case 1:
-                        go = true;
                         Connexion.getItemsFeed("https://community.funcraft.net/forums/resource-packs.33/index.rss", 0);
                         break;
                     case 2:
-                        go = true;
                         Connexion.getItemsFeed("https://community.funcraft.net/forums/maps-constructions-redstone.34/index.rss", 0);
                         break;
                     case 3:
-                        go = true;
                         Connexion.getItemsFeed("https://community.funcraft.net/forums/mods-plugins-outils.35/index.rss", 0);
                         break;
                 }
                 break;
         }
 
-        if(go){
-            while (!loaded) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException ignored) {
-                    break;
-                }
-            }
-            list1.addAll(Title);
-            list2.addAll(Subtitle);
-            list3.addAll(Dates);
-        }
-
-        for (int i = 0; i < list1.size(); i++) {
+        for (int i = 0; i < Title.size(); i++) {
             s = new StringsForAdapterItems();
-            s.setTitle(list1.get(i));
-            s.setSubtitle(list2.get(i));
-            s.setDates(list3.get(i));
+            s.setTitle(Title.get(i));
+            s.setSubtitle(Subtitle.get(i));
+            s.setDates(Dates.get(i));
             Strings.add(s);
         }
 
@@ -175,60 +306,40 @@ public class ForumActivityItems extends AppCompatActivity {
 
         StringsForAdapterSubmenu2 s;
         ArrayList<String> list1 = new ArrayList<>();
-        ArrayList<String> list2 = new ArrayList<>();
 
-        boolean go = false;
         if(ForumActivity.selection == 1){
             if(ForumActivitySubmenu.selection == 1){
-                go = true;
                 Connexion.getSubmenuSubtitles(new String[]{"https://community.funcraft.net/forums/presentation-de-teams.42/index.rss",
                         "https://community.funcraft.net/forums/recrutement-teams.44/index.rss"}, 1);
                 list1.addAll(Arrays.asList(getResources().getStringArray(R.array.Forums11Title)));
             }else if(ForumActivitySubmenu.selection == 2){
-                go = true;
                 Connexion.getSubmenuSubtitles(new String[]{"https://community.funcraft.net/forums/ameliorations.15/index.rss",
                         "https://community.funcraft.net/forums/propositions-de-mini-jeux.14/index.rss"}, 1);
                 list1.addAll(Arrays.asList(getResources().getStringArray(R.array.Forums12Title)));
             }else if(ForumActivitySubmenu.selection == 3){
-                go = true;
                 Connexion.getSubmenuSubtitles(new String[]{"https://community.funcraft.net/forums/demande-daide-questions.22/index.rss"}, 1);
                 list1.addAll(Arrays.asList(getResources().getStringArray(R.array.Forums13Title)));
             }else if(ForumActivitySubmenu.selection == 4){
-                go = true;
                 Connexion.getSubmenuSubtitles(new String[]{"https://community.funcraft.net/forums/bugs-traites.23/index.rss"}, 1);
                 list1.addAll(Arrays.asList(getResources().getStringArray(R.array.Forums14Title)));
             }
-        }else if(ForumActivitySubmenu.selection == 2){
+        }else if(ForumActivity.selection == 2){
             if(ForumActivitySubmenu.selection == 0){
-                go = true;
                 Connexion.getSubmenuSubtitles(new String[]{"https://community.funcraft.net/forums/les-jeux-forum.10/index.rss"}, 1);
                 list1.addAll(Arrays.asList(getResources().getStringArray(R.array.Forums20Title)));
             }else if(ForumActivitySubmenu.selection == 1){
-                go = true;
                 Connexion.getSubmenuSubtitles(new String[]{"https://community.funcraft.net/forums/presentation-du-staff.11/index.rss"}, 1);
                 list1.addAll(Arrays.asList(getResources().getStringArray(R.array.Forums21Title)));
             }else if(ForumActivitySubmenu.selection == 2){
-                go = true;
                 Connexion.getSubmenuSubtitles(new String[]{"https://community.funcraft.net/forums/demandes-de-creations.31/index.rss"}, 1);
                 list1.addAll(Arrays.asList(getResources().getStringArray(R.array.Forums22Title)));
             }
         }
 
-        if(go){
-            while (!loaded) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException ignored) {
-                    break;
-                }
-            }
-            list2.addAll(SubtitleOption);
-        }
-
-        for (int i = 0; i < list1.size(); i++) {
+        for (int i = 0; i < SubtitleOption.size(); i++) {
             s = new StringsForAdapterSubmenu2();
             s.setTitle(list1.get(i));
-            s.setSubtitle(list2.get(i));
+            s.setSubtitle(SubtitleOption.get(i));
             Strings.add(s);
         }
 
@@ -274,6 +385,8 @@ class CustomBaseAdapterItems extends BaseAdapter {
         StringArray = Strings;
         Inflater = LayoutInflater.from(context);
     }
+
+    public ArrayList<StringsForAdapterItems> getStringArray(){return StringArray;}
 
     public int getCount() {
         return StringArray.size();
@@ -344,6 +457,8 @@ class CustomBaseAdapterSubmenu2 extends BaseAdapter {
         StringArray = Strings;
         Inflater = LayoutInflater.from(context);
     }
+
+    public ArrayList<StringsForAdapterSubmenu2> getStringArray(){return StringArray;}
 
     public int getCount() {
         return StringArray.size();

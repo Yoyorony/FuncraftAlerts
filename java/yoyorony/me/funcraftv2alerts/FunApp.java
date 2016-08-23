@@ -1,22 +1,27 @@
 package yoyorony.me.funcraftv2alerts;
 
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.Application;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Calendar;
 
 public class FunApp extends Application {
     public static ConnectivityManager connectivityManager;
     public static SharedPreferences preferences;
-    public static int[] alerts = new int[]{0, 0};
+    public static int[] alerts = new int[]{0, 0}; //alerts[0] -> convos   alerts[1] -> alertes
     public static SharedPreferences.Editor preferenceseditor;
     public static boolean timerStopRecherche = false;
     public static boolean majdispo;
@@ -65,7 +70,7 @@ public class FunApp extends Application {
         preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         preferenceseditor = preferences.edit();
         if (!isMyServiceRunning(Notifs.class) && preferences.getBoolean("activnotif", true)) {
-            startService(new Intent(getApplicationContext(), Notifs.class));
+            Notifs.setAlarm(getBaseContext());
         }
     }
 
