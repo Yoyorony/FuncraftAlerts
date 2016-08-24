@@ -26,6 +26,9 @@
     <string name="textviewfreq">Fréquence de synchronisation : 5min</string>
     <string name="buttoncustom">Customiser</string>
     <string name="buttonhelp">Aide</string>
+    <string name="buttonoutil">Outils BBCode</string>
+    <string name="replyhint">Écrivez votre réponse...</string>
+    <string name="buttonsendreply">Postez votre réponse</string>
 
 
     <string name="waitTitle">Patientez</string>
@@ -98,7 +101,10 @@
 
     <string name="changelogtitle">Nouveautés</string>
     <string name="changelogmessage">
-        v1.1.0 :
+        v1.2.0 :
+        \n - Rien =P
+        \n
+        \nv1.1.0 :
         \n - Nouveau : Aperçu rapide des alertes
         \n - Nouveau : Aperçu rapide des conversations
         \n - Grosse optimisation de la connexion (merci à TheMent0r)

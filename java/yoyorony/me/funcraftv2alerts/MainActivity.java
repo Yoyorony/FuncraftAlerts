@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
      * - optimisation/simplification du code (surtout notifs)
      * - consult flux de nouvelle (pour 1.2.0)
      * - connect direct consult (doc html pour POST)
+     * - activity_profilepost
      *
      * TODO totest :
      * - debug consult alerts + convos
