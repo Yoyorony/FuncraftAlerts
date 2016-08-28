@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ForumActivity extends AppCompatActivity {
-    public static ListView listviexRSS = null;
-    public static SwipeRefreshLayout swiper = null;
+    private static ListView listviexRSS = null;
+    private static SwipeRefreshLayout swiper = null;
     public static int selection = -1;
     private OnItemClickListener ListViewListener = new OnItemClickListener() {
         @Override

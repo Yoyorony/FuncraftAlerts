@@ -24,19 +24,19 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class AlertReaderActivity extends AppCompatActivity {
-    public static ListView listviexRSS = null;
-    public static SwipeRefreshLayout swiper = null;
+    private static ListView listviexRSS = null;
+    private static SwipeRefreshLayout swiper = null;
     public static ArrayList<String> Who;
     public static ArrayList<String> Message;
     public static ArrayList<Integer> Type;
     public static ArrayList<String> Link;
     public static ArrayList<Boolean> New;
     public static ArrayList<String> PubDate;
-    public static CustomBaseAdapterAlerts adapter;
-    public static AlertDialog waitDialog;
-    public static AlertDialog timeoutDialog;
-    public static AlertDialog errorDialog;
-    public static AlertDialog connexionerrorDialog;
+    private static CustomBaseAdapterAlerts adapter;
+    private static AlertDialog waitDialog;
+    private static AlertDialog timeoutDialog;
+    private static AlertDialog errorDialog;
+    private static AlertDialog connexionerrorDialog;
     public static boolean timeout;
     public static boolean error;
     public static boolean connexionerror;

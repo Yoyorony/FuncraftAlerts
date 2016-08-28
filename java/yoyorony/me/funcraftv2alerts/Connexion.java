@@ -5,6 +5,7 @@ import android.net.NetworkInfo;
 import android.os.Looper;
 import android.os.Message;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,6 +26,8 @@ import javax.net.ssl.HttpsURLConnection;
 import yoyorony.me.AlertsReader.Alert;
 import yoyorony.me.AlertsReader.AlertsReader;
 import yoyorony.me.AlertsReader.Convo;
+import yoyorony.me.AlertsReader.ConvosReader;
+import yoyorony.me.PostsManager.ConvoPostsReader;
 import yoyorony.me.RSSReader.Feed;
 import yoyorony.me.RSSReader.Item;
 import yoyorony.me.RSSReader.RSSReader;
@@ -549,7 +552,7 @@ public class Connexion {
                                 + "&" + URLEncoder.encode("cookie_check", "UTF-8") + "=" + URLEncoder.encode("0", "UTF-8")
                                 + "&" + URLEncoder.encode("_xfToken", "UTF-8") + "=" + URLEncoder.encode("", "UTF-8")
                                 + "&" + URLEncoder.encode("redirect", "UTF-8") + "=" + URLEncoder.encode("https://community.funcraft.net/conversations", "UTF-8");
-                        ArrayList<Convo> convos = AlertsReader.ReadConvos(donnees);
+                        ArrayList<Convo> convos = ConvosReader.ReadConvos(donnees);
 
                         for (Convo c : convos) {
                             ConvoReaderActivity.Title.add(c.getTitle());
@@ -572,5 +575,87 @@ public class Connexion {
         }else{
             ConvoReaderActivity.connexionerror = true;
         }
+    }
+
+    public static void getConvoPosts(String codeConvo, String link) {
+        NetworkInfo networkInfo = FunApp.connectivityManager.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()) {
+            boolean wifi = networkInfo.getType() == ConnectivityManager.TYPE_WIFI;
+            if (wifi || !FunApp.preferences.getBoolean("wifionly", true)) {
+                boolean supDeuxG = isSupDeuxG(networkInfo.getSubtype());
+                if (supDeuxG || FunApp.preferences.getBoolean("deuxG", false) || wifi) {
+                    try {
+                        final String donnees = URLEncoder.encode("login", "UTF-8") + "=" + URLEncoder.encode(FunApp.preferences.getString("name", ""), "UTF-8")
+                                + "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(FunApp.preferences.getString("mdp", ""), "UTF-8")
+                                + "&" + URLEncoder.encode("cookie_check", "UTF-8") + "=" + URLEncoder.encode("0", "UTF-8")
+                                + "&" + URLEncoder.encode("_xfToken", "UTF-8") + "=" + URLEncoder.encode("", "UTF-8")
+                                + "&" + URLEncoder.encode("redirect", "UTF-8") + "=" + URLEncoder.encode(link, "UTF-8");
+                        ConvoQuickReplyActivity.convoPosts = ConvoPostsReader.ReadConvoPosts(donnees, codeConvo);
+                    } catch (InterruptedIOException e){
+                        ConvoQuickReplyActivity.timeout = true;
+                    } catch (IOException e) {
+                        ConvoQuickReplyActivity.error = true;
+                    }
+                }else{
+                    ConvoQuickReplyActivity.connexionerror = true;
+                }
+            }else{
+                ConvoQuickReplyActivity.connexionerror = true;
+            }
+        }else{
+            ConvoQuickReplyActivity.connexionerror = true;
+        }
+    }
+
+    public static Void sendConvoPost(String message, String link, String xfToken) {
+        NetworkInfo networkInfo = FunApp.connectivityManager.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()) {
+            boolean wifi = networkInfo.getType() == ConnectivityManager.TYPE_WIFI;
+            if (wifi || !FunApp.preferences.getBoolean("wifionly", true)) {
+                boolean supDeuxG = isSupDeuxG(networkInfo.getSubtype());
+                if (supDeuxG || FunApp.preferences.getBoolean("deuxG", false) || wifi) {
+                    try {
+                        String donnees = URLEncoder.encode("message_html", "UTF-8") + "=" + URLEncoder.encode(message, "UTF-8")
+                                + "&" + URLEncoder.encode("_xfRelativeResolver", "UTF-8") + "=" + URLEncoder.encode(link, "UTF-8")
+                                + "&" + URLEncoder.encode("_xfToken", "UTF-8") + "=" + URLEncoder.encode(xfToken, "UTF-8")
+                                + "&" + URLEncoder.encode("_xfRequestUri", "UTF-8") + "=" + URLEncoder.encode(link, "UTF-8")
+                                + "&" + URLEncoder.encode("last_known_date", "UTF-8") + "=" + URLEncoder.encode("", "UTF-8")
+                                + "&" + URLEncoder.encode("_xfNoRedirect", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8");
+
+                        URL url = new URL(link + "/insert-reply");
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:39.0) Gecko/20100101 Firefox/39.0");
+                        connection.setDoOutput(true);
+                        connection.setChunkedStreamingMode(0);
+                        connection.setRequestMethod("POST");
+                        connection.setConnectTimeout(10000);
+                        connection.setInstanceFollowRedirects(false);
+
+                        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+                        writer.write(donnees);
+                        writer.flush();
+
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        String ligne;
+                        while ((ligne = reader.readLine()) != null) {
+                            Log.d("Connexion", ligne);
+                        }
+
+                        connection.disconnect();
+                    } catch (InterruptedIOException e){
+                        ConvoQuickReplyActivity.timeout = true;
+                    } catch (IOException e) {
+                        ConvoQuickReplyActivity.error = true;
+                    }
+                }else{
+                    ConvoQuickReplyActivity.connexionerror = true;
+                }
+            }else{
+                ConvoQuickReplyActivity.connexionerror = true;
+            }
+        }else{
+            ConvoQuickReplyActivity.connexionerror = true;
+        }
+        return null;
     }
 }

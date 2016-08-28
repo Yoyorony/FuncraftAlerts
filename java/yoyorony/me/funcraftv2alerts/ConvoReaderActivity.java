@@ -24,27 +24,34 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class ConvoReaderActivity extends AppCompatActivity {
-    public static ListView listviex = null;
-    public static SwipeRefreshLayout swiper = null;
+    private static ListView listviex = null;
+    private static SwipeRefreshLayout swiper = null;
     public static ArrayList<String> Title;
     public static ArrayList<String> PubDateMessage;
     public static ArrayList<String> LastGuy;
     public static ArrayList<Boolean> Lue;
     public static ArrayList<String> Link;
-    public static CustomBaseAdapterConvos adapter;
-    public static AlertDialog waitDialog;
-    public static AlertDialog timeoutDialog;
-    public static AlertDialog errorDialog;
-    public static AlertDialog connexionerrorDialog;
+    private static CustomBaseAdapterConvos adapter;
+    private static AlertDialog waitDialog;
+    private static AlertDialog timeoutDialog;
+    private static AlertDialog errorDialog;
+    private static AlertDialog connexionerrorDialog;
     public static boolean timeout;
     public static boolean error;
     public static boolean connexionerror;
     private OnItemClickListener ListViewListener = new OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Intent browserintent = new Intent(Intent.ACTION_VIEW, Uri.parse(Link.get(position)));
-            browserintent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(browserintent);
+            String temp = Link.get(position);
+            temp = temp.substring(temp.indexOf("conversations/"));
+            temp = temp.substring(temp.indexOf(".") +1);
+            ConvoQuickReplyActivity.convoCode = temp.substring(0, temp.indexOf("/"));
+
+            ConvoQuickReplyActivity.lastMessageLink = Link.get(position);
+
+            ConvoQuickReplyActivity.convoName = Title.get(position);
+
+            startActivity(new Intent(getBaseContext(), ConvoQuickReplyActivity.class));
         }
     };
     private SwipeRefreshLayout.OnRefreshListener SwiperListener = new SwipeRefreshLayout.OnRefreshListener() {

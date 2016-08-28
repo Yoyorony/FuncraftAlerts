@@ -22,15 +22,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ForumActivitySubmenu extends AppCompatActivity {
-    public static ListView listviexRSS = null;
-    public static SwipeRefreshLayout swiper = null;
+    private static ListView listviexRSS = null;
+    private static SwipeRefreshLayout swiper = null;
     public static ArrayList<String> Subtitle = new ArrayList<>();
     public static int selection = -1;
-    public static CustomBaseAdapterSubmenu adapter;
-    public static AlertDialog waitDialog;
-    public static AlertDialog timeoutDialog;
-    public static AlertDialog errorDialog;
-    public static AlertDialog connexionerrorDialog;
+    private static CustomBaseAdapterSubmenu adapter;
+    private static AlertDialog waitDialog;
+    private static AlertDialog timeoutDialog;
+    private static AlertDialog errorDialog;
+    private static AlertDialog connexionerrorDialog;
     public static boolean timeout;
     public static boolean error;
     public static boolean connexionerror;

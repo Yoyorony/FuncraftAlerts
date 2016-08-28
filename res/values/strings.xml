@@ -33,6 +33,10 @@
 
     <string name="waitTitle">Patientez</string>
     <string name="waitMessage">Téléchargement des données...</string>
+    <string name="sendingtitle">Patientez</string>
+    <string name="sendingmessage">Envoie des données...</string>
+
+    <string name="sendedtoast">Réponse envoyée</string>
 
     <string name="apropostitle">A propos</string>
     <string name="aproposmessage">Cette application, une fois les identifiants rentrés, vous permet d\'être notifié de vos alertes et vos conversations du forum de FunCraft v2.\nApplication non-officielle créée par Yoyorony.\n\nSi vous rencontrez un bug ou des fautes d\'orthographe, signalez le moi sur le forum, merci =)</string>
@@ -102,7 +106,8 @@
     <string name="changelogtitle">Nouveautés</string>
     <string name="changelogmessage">
         v1.2.0 :
-        \n - Rien =P
+        \n - Optimisations mineures de la connexion
+        \n - Optimisations mineures du code
         \n
         \nv1.1.0 :
         \n - Nouveau : Aperçu rapide des alertes
@@ -143,6 +148,12 @@
 
     <string name="forgottitle">Oublier les identifiants</string>
     <string name="forgotmessage">Voulez-vous vraiment oublier les identifiants ?</string>
+
+    <string name="clickconvotitle">Actions sur le message</string>
+    <string name="clickconvoactionview">Voir dans le navigateur</string>
+    <string name="clickconvoactionreply">Citer le message</string>
+    <string name="clickconvoactionreport">Signaler le contenu</string>
+    <string name="clickconvoactionedit">Modifier votre message</string>
 
     <string-array name="StylesList">
         <item>Rouge</item>

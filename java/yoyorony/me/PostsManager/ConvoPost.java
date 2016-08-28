@@ -4,24 +4,28 @@ public class ConvoPost {
     private String Who = "";
     private String Message = "";
     private String PubDate = "";
-    private int PostCode = -1;
-    private int ConvoCode = -1;
+    private String PostCode = "-1";
+    private String ConvoCode = "-1";
+    private String MemberCode = "-1";
+    private boolean CanEdited = false;
 
     public ConvoPost(){}
 
     public String getWho() {return Who;}
     public String getMessage() {return Message;}
     public String getPubDate() {return PubDate;}
-    public int getPostCode() {return PostCode;}
-    public int getConvoCode() {return ConvoCode;}
+    public boolean getCanEdited() {return CanEdited;}
 
     public void setWho(String who) {Who = who;}
     public void setMessage(String message) {Message = message;}
     public void setPubDate(String pubDate) {PubDate = pubDate;}
-    public void setPostCode(int postCode) {PostCode = postCode;}
-    public void setConvoCode(int convoCode) {ConvoCode = convoCode;}
+    public void setPostCode(String postCode) {PostCode = postCode;}
+    public void setConvoCode(String convoCode) {ConvoCode = convoCode;}
+    public void setCanEdited(boolean canEdited) {CanEdited = canEdited;}
+    public void setMemberCode(String memberCode) {MemberCode = memberCode;}
 
-    public String getViewLink(){return "https://community.funcraft.net/conversations/" + String.valueOf(ConvoCode) + "/message?message_id=" + String.valueOf(PostCode);}
-    public String getReportLink(){return "https://community.funcraft.net/conversations/" + String.valueOf(ConvoCode) + "/report?message_id=" + String.valueOf(PostCode);}
-    public String getEditLink(){return "https://community.funcraft.net/conversations/" + String.valueOf(ConvoCode) + "/edit-message?m=" + String.valueOf(PostCode);}
+    public String getViewLink(){return "https://community.funcraft.net/conversations/" + ConvoCode + "/message?message_id=" + PostCode;}
+    public String getReportLink(){return "https://community.funcraft.net/conversations/" + ConvoCode + "/report?message_id=" + PostCode;}
+    public String getEditLink(){return "https://community.funcraft.net/conversations/" + ConvoCode + "/edit-message?m=" + PostCode;}
+    public String getQuoteParam(){return Who + ", convMessage: " + PostCode + ", member: " + MemberCode;}
 }

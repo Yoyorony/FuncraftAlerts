@@ -3,7 +3,6 @@ package yoyorony.me.PostsManager;
 public class CommentProfilePost {
 
     private String Who = "";
-    private String Link = "";
     private String Message = "";
     private String PubDate = "";
     private int PostCode = -1;
@@ -11,13 +10,11 @@ public class CommentProfilePost {
     public CommentProfilePost(){}
 
     public String getWho() {return Who;}
-    public String getLink() {return Link;}
     public String getMessage() {return Message;}
     public String getPubDate() {return PubDate;}
     public int getPostCode() {return PostCode;}
 
     public void setWho(String who) {Who = who;}
-    public void setLink(String link) {Link = link;}
     public void setMessage(String message) {Message = message;}
     public void setPubDate(String pubDate) {PubDate = pubDate;}
     public void setPostCode(int postCode) {PostCode = postCode;}

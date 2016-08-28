@@ -22,9 +22,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ForumActivityItemsSecond extends AppCompatActivity {
-    public static ListView listviexRSS = null;
-    public static ListView listviexRSSOptions = null;
-    public static SwipeRefreshLayout swiper = null;
+    private static ListView listviexRSS = null;
+    private static ListView listviexRSSOptions = null;
+    private static SwipeRefreshLayout swiper = null;
     public static ArrayList<String> Title = new ArrayList<>();
     public static ArrayList<String> Subtitle = new ArrayList<>();
     public static ArrayList<String> Dates = new ArrayList<>();
@@ -36,12 +36,12 @@ public class ForumActivityItemsSecond extends AppCompatActivity {
     public static boolean timeout;
     public static boolean error;
     public static boolean connexionerror;
-    public static CustomBaseAdapterItems2 adapter;
-    public static CustomBaseAdapterSubmenu3 adapter2;
-    public static AlertDialog waitDialog;
-    public static AlertDialog timeoutDialog;
-    public static AlertDialog errorDialog;
-    public static AlertDialog connexionerrorDialog;
+    private static CustomBaseAdapterItems2 adapter;
+    private static CustomBaseAdapterSubmenu3 adapter2;
+    private static AlertDialog waitDialog;
+    private static AlertDialog timeoutDialog;
+    private static AlertDialog errorDialog;
+    private static AlertDialog connexionerrorDialog;
     private AdapterView.OnItemClickListener ListViewListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

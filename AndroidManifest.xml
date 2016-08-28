@@ -48,6 +48,10 @@
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
         <activity
+            android:name=".ConvoQuickReplyActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".ExceptionSend"
             android:theme="@style/AppTheme" />
 

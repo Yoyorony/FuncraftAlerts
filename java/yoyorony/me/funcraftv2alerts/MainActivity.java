@@ -1,10 +1,7 @@
 package yoyorony.me.funcraftv2alerts;
 
-import android.annotation.SuppressLint;
 import android.app.ActivityManager;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,24 +32,21 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Calendar;
-
-@SuppressLint("InflateParams")
 public class MainActivity extends AppCompatActivity {
     /**
      * TODO todo :
      * - optimisation/simplification du code (surtout notifs)
      * - consult flux de nouvelle (pour 1.2.0)
      * - connect direct consult (doc html pour POST)
-     * - activity_profilepost
+     * - Attention aux quotations de quotations dans les reply
      *
      * TODO totest :
      * - debug consult alerts + convos
      */
 
-    public static AlertDialog.Builder alertDialog;
-    public static LayoutInflater inflaterDialog;
-    public static Context mContext;
+    private static AlertDialog.Builder alertDialog;
+    private static LayoutInflater inflaterDialog;
+    private static Context mContext;
 
     public static Handler ConnectHandler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -69,40 +63,26 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public static TextView header1 = null;
     public static EditText name = null;
     public static EditText mdp = null;
-    public static Button connect = null;
-    public static Button forgot = null;
     public static ProgressBar progressBarConnect = null;
-    public static TextView header2 = null;
-    public static Switch activenotif = null;
-    public static TextView alertstext = null;
-    public static CheckBox alerts = null;
-    public static TextView convostext = null;
-    public static CheckBox convos = null;
+    private static TextView alertstext = null;
+    private static CheckBox alerts = null;
+    private static TextView convostext = null;
+    private static CheckBox convos = null;
     public static TextView freqtext = null;
-    public static SeekBar freqseek = null;
-    public static TextView sonnerietext = null;
-    public static CheckBox sonnerie = null;
-    public static TextView vibreurtext = null;
-    public static CheckBox vibreur = null;
-    public static ImageButton vibreurparam = null;
-    public static TextView ledtext = null;
-    public static CheckBox led = null;
-    public static ImageButton ledparam = null;
-    public static TextView connexiontext = null;
-    public static ImageButton connexion = null;
-    public static TextView header5 = null;
-    public static Button forums = null;
-    public static Button consultalert = null;
-    public static Button consultconvo = null;
-    public static TextView header4 = null;
-    public static Button about = null;
-    public static Button aide = null;
-    public static Button checkversion = null;
+    private static SeekBar freqseek = null;
+    private static TextView sonnerietext = null;
+    private static CheckBox sonnerie = null;
+    private static TextView vibreurtext = null;
+    private static CheckBox vibreur = null;
+    private static ImageButton vibreurparam = null;
+    private static TextView ledtext = null;
+    private static CheckBox led = null;
+    private static ImageButton ledparam = null;
+    private static TextView connexiontext = null;
+    private static ImageButton connexion = null;
     public static ProgressBar progressBarCheckversion = null;
-    public static Button changelog = null;
     public static int[] currentnotifcontent = new int[]{0, 0};
     private OnClickListener ButtonListener = new OnClickListener() {
         @Override
@@ -519,16 +499,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
-        header1 = (TextView) findViewById(R.id.header1);
         name = (EditText) findViewById(R.id.nameinput);
         mdp = (EditText) findViewById(R.id.mdpinput);
-        connect = (Button) findViewById(R.id.connectbutton);
+        Button connect = (Button) findViewById(R.id.connectbutton);
         connect.setOnClickListener(ButtonListener);
-        forgot = (Button) findViewById(R.id.forgetbutton);
+        Button forgot = (Button) findViewById(R.id.forgetbutton);
         forgot.setOnClickListener(ButtonListener);
         progressBarConnect = (ProgressBar) findViewById(R.id.progressBarConnect);
-        header2 = (TextView) findViewById(R.id.header2);
-        activenotif = (Switch) findViewById(R.id.activnotifswitch);
+        Switch activenotif = (Switch) findViewById(R.id.activnotifswitch);
         activenotif.setOnCheckedChangeListener(ActivListener);
         alertstext = (TextView) findViewById(R.id.alertscheckBoxtext);
         alerts = (CheckBox) findViewById(R.id.alertscheckBox);
@@ -555,24 +533,21 @@ public class MainActivity extends AppCompatActivity {
         connexiontext = (TextView) findViewById(R.id.connexiontext);
         connexion = (ImageButton) findViewById(R.id.connexionparam);
         connexion.setOnClickListener(ButtonListener);
-        header5 = (TextView) findViewById(R.id.header5);
-
-        forums = (Button) findViewById(R.id.forumbutton);
+        Button forums = (Button) findViewById(R.id.forumbutton);
         forums.setOnClickListener(ButtonListener);
-        consultalert = (Button) findViewById(R.id.convobutton);
+        Button consultalert = (Button) findViewById(R.id.convobutton);
         consultalert.setOnClickListener(ButtonListener);
-        consultconvo = (Button) findViewById(R.id.alertbutton);
+        Button consultconvo = (Button) findViewById(R.id.alertbutton);
         consultconvo.setOnClickListener(ButtonListener);
 
-        header4 = (TextView) findViewById(R.id.header4);
-        about = (Button) findViewById(R.id.aproposbutton);
+        Button about = (Button) findViewById(R.id.aproposbutton);
         about.setOnClickListener(ButtonListener);
-        aide = (Button) findViewById(R.id.helpbutton);
+        Button aide = (Button) findViewById(R.id.helpbutton);
         aide.setOnClickListener(ButtonListener);
-        checkversion = (Button) findViewById(R.id.checkversionbutton);
+        Button checkversion = (Button) findViewById(R.id.checkversionbutton);
         checkversion.setOnClickListener(ButtonListener);
         progressBarCheckversion = (ProgressBar) findViewById(R.id.progressBarCheckVersion);
-        changelog = (Button) findViewById(R.id.changelogbutton);
+        Button changelog = (Button) findViewById(R.id.changelogbutton);
         changelog.setOnClickListener(ButtonListener);
 
         activenotif.setChecked(FunApp.preferences.getBoolean("activnotif", true));

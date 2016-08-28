@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorbackground"
@@ -11,20 +11,24 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical" >
 
-    <RelativeLayout
+    <ListView
+        android:id="@+id/listViewConvopost"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:stackFromBottom="true"
+        android:layout_height="wrap_content" />
 
-        <ListView
-            android:id="@+id/listViewConvopost"
+    <LinearLayout
+        android:id="@+id/replylayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/colorbackground"
+        android:layout_alignParentBottom="true" >
+
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+            android:layout_height="3dp"
+            android:background="@color/colorbutton"/>
 
         <Button
             android:id="@+id/outilbutton"
@@ -37,6 +41,8 @@
             android:id="@+id/replytextarea"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minLines="4"
+            android:gravity="top"
             android:hint="@string/replyhint"
             android:textColor="@color/colortext" />
 
@@ -46,5 +52,5 @@
             android:layout_height="wrap_content"
             android:text="@string/buttonsendreply"
             android:textColor="@color/colortext" />
-    </RelativeLayout>
-</LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

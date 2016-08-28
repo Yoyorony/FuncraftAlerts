@@ -17,17 +17,17 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class ForumActivityItemsThird extends AppCompatActivity {
-    public static ListView listviexRSS = null;
-    public static SwipeRefreshLayout swiper = null;
+    private static ListView listviexRSS = null;
+    private static SwipeRefreshLayout swiper = null;
     public static ArrayList<String> Title = new ArrayList<>();
     public static ArrayList<String> Subtitle = new ArrayList<>();
     public static ArrayList<String> Dates = new ArrayList<>();
     public static ArrayList<String> Links = new ArrayList<>();
-    public static CustomBaseAdapterItems adapter;
-    public static AlertDialog waitDialog;
-    public static AlertDialog timeoutDialog;
-    public static AlertDialog errorDialog;
-    public static AlertDialog connexionerrorDialog;
+    private static CustomBaseAdapterItems adapter;
+    private static AlertDialog waitDialog;
+    private static AlertDialog timeoutDialog;
+    private static AlertDialog errorDialog;
+    private static AlertDialog connexionerrorDialog;
     public static boolean timeout;
     public static boolean error;
     public static boolean connexionerror;
